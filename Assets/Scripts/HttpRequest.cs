@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using System.Collections;
-using UnityEngine.Networking;
 using UnityEngine.UI;
 
 public class HttpRequest : MonoBehaviour {
@@ -11,11 +10,12 @@ public class HttpRequest : MonoBehaviour {
     protected Slider numberOfCustomersSlider;
     protected GameObject customerContainer;
 
+
 	// Use this for initialization
 	void Start () {
         numberOfCustomersSlider = GameObject.Find ("SliderNumCustomers").GetComponent <Slider> ();
         customerContainer = GameObject.Find("CustomerContainer");
-		StartCoroutine(GetCustomers());
+		StartCoroutine(GetCustomersWithProducts());
         SetNumOfCustomersToGet();
 	}
 	
@@ -24,38 +24,58 @@ public class HttpRequest : MonoBehaviour {
 		
 	}
 
-    public void SendRequest() {
-        StartCoroutine(GetCustomers());
+    public void SendProductRequest() {
+        StartCoroutine(GetCustomersWithProducts());
     }
 
-	IEnumerator GetCustomers() {
+    IEnumerator GetCustomersWithProducts() {
         // Create a Web Form
 		WWWForm form = new WWWForm();
 
         // Number of customers to get with the request
-		form.AddField("n", numberOfCustomersToGet);
+		form.AddField("product_id", "1,2");
 
 		// Create a download object
-		WWW download = new WWW( "http://vrvis-api.app/api/customers", form );
+		WWW download = new WWW( "http://vrvis-api.app/api/all", form );
 
 		// Wait until the download is done
 		yield return download;
-        
+
 
 		if(!string.IsNullOrEmpty(download.error)) {
 			print( "Error downloading: " + download.error );
 		} else {
 			// show the highscores
-            Customer[] results = JsonHelper.getJsonArray<Customer> (download.text);
+            JSONObject myJson = new JSONObject(download.text);
 
+            // Clear the data in the scene
             RemoveCustomers();
 
-            foreach (Customer c in results)
+            // For every product
+            foreach (JSONObject product in myJson.list)
             {
-                GameObject customerObj =  (GameObject) Instantiate(customerBall, Random.insideUnitSphere * 10, Quaternion.identity);
-                customerObj.transform.parent = customerContainer.transform;
-                print(c.street);
+                // For every customer with that product
+                foreach (JSONObject customer in product.list)
+                {
+                    GameObject customerObj =  (GameObject) Instantiate(customerBall, new Vector3(
+                        Random.insideUnitCircle.x * 10, 
+                        customer["nps_scores"].list[0]["score"].f,
+                        Random.insideUnitCircle.y * 10),
+                        Quaternion.identity
+                    );
+                    customerObj.transform.parent = customerContainer.transform;
+
+                    print(customer["nps_scores"].list[0]["score"].f);
+
+                    // For every key, if needed for some time
+                    // foreach (var key in customer.keys)
+                    // {
+                    //     print(key + ": " + customer[key]);
+                        
+                    // }
+                }
             }
+
 		}
     }
 
@@ -63,28 +83,12 @@ public class HttpRequest : MonoBehaviour {
         numberOfCustomersToGet = (int) numberOfCustomersSlider.value;
         sliderText.text = numberOfCustomersToGet.ToString();
 
-        print(numberOfCustomersToGet);
+        // print(numberOfCustomersToGet);
     }
 
     public void RemoveCustomers() {
         foreach (Transform child in customerContainer.transform) {
             GameObject.Destroy(child.gameObject);
-        }
-    }
-
-
-    [System.Serializable]
-    public class Customer
-    {
-        // public string name;
-        // public int lives;
-        // public float health;
-        public string customer_type, customer_number, first_name, last_name, email, mobile, street, city, zip_code, social_security_number, created_date, created_at, updated_at;
-        public int id, ataio_id, organization_id;
-
-        public static Customer CreateFromJSON(string jsonString)
-        {
-            return JsonUtility.FromJson<Customer>(jsonString);
         }
     }
 }
