@@ -9,6 +9,7 @@ public class HttpRequest : MonoBehaviour {
     public Text sliderText;
     protected Slider numberOfCustomersSlider;
     protected GameObject customerContainer;
+    protected JSONObject customerData;
 
 
 	// Use this for initialization
@@ -49,32 +50,34 @@ public class HttpRequest : MonoBehaviour {
 			print( "Error downloading: " + download.error );
 		} else {
 			// show the highscores
-            JSONObject myJson = new JSONObject(download.text);
+            customerData = new JSONObject(download.text);
 
             // Clear the data in the scene
             RemoveCustomers();
 
             // For every product
-            foreach (JSONObject product in myJson.list)
+            foreach (JSONObject product in customerData.list)
             {
                 // For every customer with that product
                 foreach (JSONObject customer in product.list)
                 {
                     GameObject customerObj =  (GameObject) Instantiate(customerBall);
                     customerObj.transform.parent = customerContainer.transform;
+                    customerObj.transform.localScale = customerContainer.transform.localScale / 3f;
                     
-                    customerObj.transform.position = customerContainer.transform.position + new Vector3(
+                    customerObj.transform.localPosition = customerContainer.transform.position + new Vector3(
                         Random.insideUnitCircle.x, 
-                        customer["nps_scores"].list[0]["score"].f / 10,
+                        (customer["nps_scores"].list[0]["score"].f / 10),
                         Random.insideUnitCircle.y);
 
                     customerObj.transform.rotation = Quaternion.identity;
+
                     // customerObj.transform.position = new Vector3(
                     //     Random.insideUnitCircle.x, 
                     //     customer["nps_scores"].list[0]["score"].f / 10,
                     //     Random.insideUnitCircle.y);
 
-                    print(customer["nps_scores"].list[0]["score"].f);
+                    // print(customer["nps_scores"].list[0]["score"].f);
 
                     // For every key, if needed some time
                     // foreach (var key in customer.keys)
