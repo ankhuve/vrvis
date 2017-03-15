@@ -15,7 +15,7 @@ public class HttpRequest : MonoBehaviour {
 	void Start () {
         numberOfCustomersSlider = GameObject.Find ("SliderNumCustomers").GetComponent <Slider> ();
         customerContainer = GameObject.Find("CustomerContainer");
-		StartCoroutine(GetCustomersWithProducts());
+		// StartCoroutine(GetCustomersWithProducts());
         SetNumOfCustomersToGet();
 	}
 	
@@ -34,6 +34,9 @@ public class HttpRequest : MonoBehaviour {
 
         // Number of customers to get with the request
 		form.AddField("product_id", "1,2");
+
+        // Number of customers to get with the request
+		form.AddField("n", numberOfCustomersToGet);
 
 		// Create a download object
 		WWW download = new WWW( "http://vrvis-api.app/api/all", form );
@@ -57,17 +60,23 @@ public class HttpRequest : MonoBehaviour {
                 // For every customer with that product
                 foreach (JSONObject customer in product.list)
                 {
-                    GameObject customerObj =  (GameObject) Instantiate(customerBall, new Vector3(
-                        Random.insideUnitCircle.x * 10, 
-                        customer["nps_scores"].list[0]["score"].f,
-                        Random.insideUnitCircle.y * 10),
-                        Quaternion.identity
-                    );
+                    GameObject customerObj =  (GameObject) Instantiate(customerBall);
                     customerObj.transform.parent = customerContainer.transform;
+                    
+                    customerObj.transform.position = customerContainer.transform.position + new Vector3(
+                        Random.insideUnitCircle.x, 
+                        customer["nps_scores"].list[0]["score"].f / 10,
+                        Random.insideUnitCircle.y);
+
+                    customerObj.transform.rotation = Quaternion.identity;
+                    // customerObj.transform.position = new Vector3(
+                    //     Random.insideUnitCircle.x, 
+                    //     customer["nps_scores"].list[0]["score"].f / 10,
+                    //     Random.insideUnitCircle.y);
 
                     print(customer["nps_scores"].list[0]["score"].f);
 
-                    // For every key, if needed for some time
+                    // For every key, if needed some time
                     // foreach (var key in customer.keys)
                     // {
                     //     print(key + ": " + customer[key]);
