@@ -10,6 +10,9 @@ public class HttpRequest : MonoBehaviour {
     protected Slider numberOfCustomersSlider;
     protected GameObject customerContainer;
 
+    public GameObject CustomerSprite;
+    public GameObject graphContainer;
+
 
 	// Use this for initialization
 	void Start () {
@@ -60,13 +63,15 @@ public class HttpRequest : MonoBehaviour {
                 // For every customer with that product
                 foreach (JSONObject customer in product.list)
                 {
-                    GameObject customerObj =  (GameObject) Instantiate(customerBall);
-                    customerObj.transform.parent = customerContainer.transform;
+                    GameObject customerObj =  (GameObject) Instantiate(CustomerSprite);
+                    customerObj.transform.parent = graphContainer.transform;
                     
-                    customerObj.transform.position = customerContainer.transform.position + new Vector3(
-                        Random.insideUnitCircle.x, 
-                        customer["nps_scores"].list[0]["score"].f / 10,
-                        Random.insideUnitCircle.y);
+                    print(customer["nps_scores"].list[0]["score"].f);
+
+                    customerObj.transform.position = graphContainer.transform.GetChild(0).transform.position + new Vector3(
+                        (customer["nps_scores"].list[0]["score"].f / 50f) * 5.77f, 
+                        Random.Range(0f, 8.5f/5f),
+                        0f);
 
                     customerObj.transform.rotation = Quaternion.identity;
                     // customerObj.transform.position = new Vector3(
@@ -74,7 +79,7 @@ public class HttpRequest : MonoBehaviour {
                     //     customer["nps_scores"].list[0]["score"].f / 10,
                     //     Random.insideUnitCircle.y);
 
-                    print(customer["nps_scores"].list[0]["score"].f);
+                    
 
                     // For every key, if needed some time
                     // foreach (var key in customer.keys)
