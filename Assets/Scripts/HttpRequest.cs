@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 public class HttpRequest : MonoBehaviour {
 
@@ -12,13 +13,13 @@ public class HttpRequest : MonoBehaviour {
 
     public GameObject CustomerSprite;
     public GameObject graphContainer;
+    public List<GameObject> customerElementList;
 
 
 	// Use this for initialization
 	void Start () {
         numberOfCustomersSlider = GameObject.Find ("SliderNumCustomers").GetComponent <Slider> ();
-        customerContainer = GameObject.Find("CustomerContainer");
-		// StartCoroutine(GetCustomersWithProducts());
+		StartCoroutine(GetCustomersWithProducts());
         SetNumOfCustomersToGet();
 	}
 	
@@ -36,7 +37,7 @@ public class HttpRequest : MonoBehaviour {
 		WWWForm form = new WWWForm();
 
         // Number of customers to get with the request
-		form.AddField("product_id", "1,2");
+		form.AddField("product_id", "1,2,6");
 
         // Number of customers to get with the request
 		form.AddField("n", numberOfCustomersToGet);
@@ -57,37 +58,47 @@ public class HttpRequest : MonoBehaviour {
             // Clear the data in the scene
             RemoveCustomers();
 
+            int pCount = 0;
             // For every product
             foreach (JSONObject product in myJson.list)
             {
+                GameObject customerObjContainer =  new GameObject("product-" + pCount);
+                customerObjContainer.transform.parent = graphContainer.transform.FindChild("Products");
+                customerObjContainer.transform.localPosition = new Vector3(0, 0, 0);
+                print(product.list[0]["product_name"]);
+
                 // For every customer with that product
                 foreach (JSONObject customer in product.list)
                 {
-                    GameObject customerObj =  (GameObject) Instantiate(CustomerSprite);
-                    customerObj.transform.parent = graphContainer.transform;
+                    GameObject customerObj =  (GameObject) Instantiate(customerElementList[pCount]);
                     
-                    print(customer["nps_scores"].list[0]["score"].f);
+                    // print(customer["nps_scores"].list[0]["score"].f);
 
-                    customerObj.transform.position = graphContainer.transform.GetChild(0).transform.position + new Vector3(
-                        (customer["nps_scores"].list[0]["score"].f / 50f) * 5.77f, 
-                        Random.Range(0f, 8.5f/5f),
-                        0f);
+                    // för användning av Antons graf
+                    // customerObj.transform.position = customerObjContainer.transform.position + new Vector3(
+                    //     (customer["nps_scores"].list[0]["score"].f / 50f) * 5.77f, 
+                    //     Random.Range(0f, 8.5f/5f),
+                    //     0f);
+
+                    customerObj.transform.parent = customerObjContainer.transform;
 
                     customerObj.transform.rotation = Quaternion.identity;
-                    // customerObj.transform.position = new Vector3(
-                    //     Random.insideUnitCircle.x, 
-                    //     customer["nps_scores"].list[0]["score"].f / 10,
-                    //     Random.insideUnitCircle.y);
 
-                    
+                    customerObj.transform.localPosition = new Vector3(
+                        Random.insideUnitCircle.x, 
+                        customer["nps_scores"].list[0]["score"].f / 10,
+                        Random.insideUnitCircle.y);
 
-                    // For every key, if needed some time
+                    // For every key, if ever needed
                     // foreach (var key in customer.keys)
                     // {
                     //     print(key + ": " + customer[key]);
                         
                     // }
                 }
+
+                // customerObjContainer.transform.eulerAngles = new Vector3(0, pCount * 72, 0);
+                pCount++;
             }
 
 		}
@@ -101,8 +112,11 @@ public class HttpRequest : MonoBehaviour {
     }
 
     public void RemoveCustomers() {
-        foreach (Transform child in customerContainer.transform) {
-            GameObject.Destroy(child.gameObject);
+        Transform productsContainer = graphContainer.transform.Find("Products");
+        print(productsContainer);
+        foreach (Transform product in productsContainer) {
+            // Kill all children >:)
+            GameObject.Destroy(product.gameObject);
         }
     }
 }
