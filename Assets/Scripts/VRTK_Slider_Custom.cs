@@ -32,6 +32,7 @@ namespace VRTK
         public bool snapToStep = false;
         [Tooltip("The amount of friction the slider will have when it is released.")]
         public float releasedFriction = 50f;
+        public GameObject APIHandler;
 
         protected Direction finalDirection;
         protected Rigidbody sliderRigidbody;
@@ -152,6 +153,9 @@ namespace VRTK
         protected override void HandleUpdate()
         {
             CalculateValue();
+
+            APIHandler.GetComponent<HttpRequest>().SetNumOfCustomersToGet();
+
             if (snapToStep)
             {
                 SnapToValue();

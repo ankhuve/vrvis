@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine.UI;
 using System.Collections.Generic;
 
-public class HttpRequest : MonoBehaviour {
+public class HttpRequestOld : MonoBehaviour {
 
     public GameObject customerBall;
     public int numberOfCustomersToGet;
@@ -43,10 +43,10 @@ public class HttpRequest : MonoBehaviour {
     }
 
     private void CalculateMinMaxValues(JSONObject customerData) {
-        foreach (JSONObject customer in customerData.list)
+        foreach (JSONObject product in customerData.list)
             {
-                //foreach (JSONObject customer in product.list)
-                //{
+                foreach (JSONObject customer in product.list)
+                {
                     if(customer.HasField("id") && customer.HasField("age")){
                         // find max values
                         if(customer["age"].f > maxAge){
@@ -65,8 +65,8 @@ public class HttpRequest : MonoBehaviour {
                         if(customer["months_ago"].f < minLengthOfBeingCustomer){
                             minLengthOfBeingCustomer = customer["months_ago"].f;
                         }
-                     }
-                // }
+                    }
+                }
             }
     }
 
@@ -94,37 +94,34 @@ public class HttpRequest : MonoBehaviour {
             customerData = new JSONObject(download.text);
 
             // Clear the data in the scene
-            //RemoveCustomers();
+            RemoveCustomers();
 
             CalculateMinMaxValues(customerData);
 
             print("minAge: " + minAge + "\nmaxAge: " + maxAge + "\nmaxLengthOfCustomer: " + maxLengthOfBeingCustomer + "\nminLengthOfCustomer" + minLengthOfBeingCustomer);
 
-            int customerCount = 0;
+            int pCount = 0;
             // For every product
-            //foreach (JSONObject product in customerData.list)
-            //{
-                /*
+            foreach (JSONObject product in customerData.list)
+            {
+                
                 GameObject customerObjContainer =  new GameObject("product-" + pCount);
                 customerObjContainer.transform.parent = graphContainer.transform.FindChild("Products");
                 customerObjContainer.transform.localRotation = Quaternion.identity;
                 customerObjContainer.transform.localPosition = new Vector3(0, 0, 0); //Set pivot values
-                */
+                
 
                 // print(product.list[0]["count"]);
                 // print(product.list[1]["product_name"]);
 
 
                 // For every customer with that product
-                foreach (JSONObject customer in customerData.list)
+                foreach (JSONObject customer in product.list)
                 {
                     // Skips first object with only count data
                     if(customer.HasField("id")){
-                        //GameObject customerObj =  (GameObject) Instantiate(customerElementList[pCount]);
+                        GameObject customerObj =  (GameObject) Instantiate(customerElementList[pCount]);
                         
-                        //Get object by index from object pool, will fail if over 1000 (implement guard for this)
-                        GameObject customerObj = CustomerObjectPool.current.getCustomerObjByIndex(customerCount);
-
                         float xPos;
                         if(customer.HasField("age")){
                             // (maxAge - minAge) / 2
@@ -136,19 +133,6 @@ public class HttpRequest : MonoBehaviour {
                         } else{
                             xPos = Mathf.Abs(Random.insideUnitCircle.x);
                             print("dunno: " + xPos);
-                        }
-
-                        if(customer.HasField("pivot") && customer["pivot"].HasField("product_id")) {
-                            if(customer["pivot"]["product_id"].f == 1f) {
-                                //set red material
-                                customerObj.transform.GetChild(0).GetComponent<Renderer>().material = redMaterial;
-                            }
-                            else if (customer["pivot"]["product_id"].f == 2f) {
-                                customerObj.transform.GetChild(0).GetComponent<Renderer>().material = blueMaterial;
-                            }
-                            else if (customer["pivot"]["product_id"].f == 6f) {
-                                customerObj.transform.GetChild(0).GetComponent<Renderer>().material = greenMaterial;
-                            }
                         }
                         
                         float zPos;
@@ -165,7 +149,7 @@ public class HttpRequest : MonoBehaviour {
                         //     Random.Range(0f, 8.5f/5f),
                         //     0f);
 
-                        customerObj.transform.parent = graphContainer.transform.Find("Products").transform;
+                        customerObj.transform.parent = customerObjContainer.transform;
 
                         customerObj.transform.rotation = Quaternion.identity;
 
@@ -175,9 +159,7 @@ public class HttpRequest : MonoBehaviour {
                             zPos);
 
 
-                        //Sets saturation depending on age.
-
-                        /*
+                        
                         Color emissiveColors = customerObj.transform.GetChild(0).GetComponent<Renderer>().material.GetColor("_EmissionColor");
                         print(emissiveColors);
                         emissiveColors.r = emissiveColors.r * (0.5f / (0.5f + xPos));
@@ -195,9 +177,7 @@ public class HttpRequest : MonoBehaviour {
                         // colors.a = colors.a * (0.1f / (0.1f + xPos));
                         print(colors);
                         customerObj.transform.GetChild(0).GetComponent<Renderer>().material.SetColor("_Color", colors);
-                        */
-
-
+                        
                         // For every key, if ever needed
                         // foreach (var key in customer.keys)
                         // {
@@ -205,12 +185,11 @@ public class HttpRequest : MonoBehaviour {
                             
                         // }
                     }
-                    customerCount++;
                 }
 
                 // customerObjContainer.transform.eulerAngles = new Vector3(0, pCount * 72, 0);
-                //pCount++;
-            //}
+                pCount++;
+            }
 
 		}
     }
