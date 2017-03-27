@@ -21,6 +21,7 @@ public class CustomerObjectPool : MonoBehaviour {
 		for(int i = 0; i < pooledAmount; i++) {
 			GameObject obj = (GameObject) Instantiate(pooledObject);
 			obj.SetActive(false);
+			obj.transform.SetParent(GetComponent<HttpRequest>().graphContainer.transform.FindChild("Products").transform);
 			pooledObjects.Add(obj);
 		}
 		print("Object pool loaded");

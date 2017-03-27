@@ -30,7 +30,7 @@ public class ViewStructureChangeScript : MonoBehaviour {
 		print("Pusheeeed " + productToHighlight);
 
 		currentlyHighlighted.Add(productToHighlight);
-
+/* 
 		for (int i = 1; i <= products.transform.childCount; i++)
 		{
 			GameObject productContainer = GameObject.Find("product-" + (i - 1));
@@ -53,5 +53,6 @@ public class ViewStructureChangeScript : MonoBehaviour {
 				}
 			}
 		}
+		*/
 	}
 }

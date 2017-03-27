@@ -79,6 +79,8 @@ public class HttpRequest : MonoBehaviour {
 
         // Number of customers to get with the request
 		form.AddField("n", numberOfCustomersToGet);
+        print("Nrs to get: " + numberOfCustomersToGet);
+        print("ChildCount: " + graphContainer.transform.GetChild(0).transform.childCount);
 
 		// Create a download object
 		WWW download = new WWW( "http://vrvis-api.app/api/all", form );
@@ -124,6 +126,7 @@ public class HttpRequest : MonoBehaviour {
                         
                         //Get object by index from object pool, will fail if over 1000 (implement guard for this)
                         GameObject customerObj = CustomerObjectPool.current.getCustomerObjByIndex(customerCount);
+                        CustomerData customerData = customerObj.GetComponent<CustomerData>();
 
                         float xPos;
                         if(customer.HasField("age")){
@@ -132,6 +135,8 @@ public class HttpRequest : MonoBehaviour {
                             if(xPos < 0){
                                 print(customer["age"]);
                             }
+                            //Set age to script
+                            customerData.age = (int) customer["age"].f;
                             // xPos = customer["age"].f / 30;
                         } else{
                             xPos = Mathf.Abs(Random.insideUnitCircle.x);
@@ -149,15 +154,19 @@ public class HttpRequest : MonoBehaviour {
                             else if (customer["pivot"]["product_id"].f == 6f) {
                                 customerObj.transform.GetChild(0).GetComponent<Renderer>().material = greenMaterial;
                             }
+                            customerData.productCategoryId = (int) customer["pivot"]["product_id"].f;
                         }
                         
                         float zPos;
                         if(customer.HasField("months_ago")){
                             zPos = (1 / (maxLengthOfBeingCustomer - minLengthOfBeingCustomer)) * (customer["months_ago"].f - minLengthOfBeingCustomer);
                             // zPos = customer["months_ago"].f / 60;
+                            customerData.timeAsCustomerInMonths = (int) customer["months_ago"].f;
                         } else{
                             zPos = Random.insideUnitCircle.y;
                         }
+
+                        customerData.npsScore = (int)customer["nps_scores"].list[0]["score"].f;
 
                         // för användning av Antons graf
                         // customerObj.transform.position = customerObjContainer.transform.position + new Vector3(
@@ -165,14 +174,14 @@ public class HttpRequest : MonoBehaviour {
                         //     Random.Range(0f, 8.5f/5f),
                         //     0f);
 
-                        customerObj.transform.parent = graphContainer.transform.Find("Products").transform;
+                        //customerObj.transform.parent = graphContainer.transform.Find("Products").transform;
 
                         customerObj.transform.rotation = Quaternion.identity;
 
                         customerObj.transform.localPosition = new Vector3(
-                            xPos,
-                            customer["nps_scores"].list[0]["score"].f / 10,
-                            zPos);
+                            xPos * 5,
+                            customer["nps_scores"].list[0]["score"].f / 2,
+                            zPos * 5);
 
 
                         //Sets saturation depending on age.
@@ -225,9 +234,10 @@ public class HttpRequest : MonoBehaviour {
     public void RemoveCustomers() {
         Transform productsContainer = graphContainer.transform.Find("Products");
         // print(productsContainer);
-        foreach (Transform product in productsContainer) {
+        foreach (Transform customer in productsContainer) {
             // Kill all children >:)
-            GameObject.Destroy(product.gameObject);
+            //GameObject.Destroy(product.gameObject);
+            customer.gameObject.SetActive(false);
         }
     }
 }
