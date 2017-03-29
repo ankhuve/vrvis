@@ -1,10 +1,18 @@
 fileFormatVersion: 2
 guid: 366c11171ddfc8a4eb0aead0878a8f44
-timeCreated: 1487594208
+timeCreated: 1490621382
 licenseType: Free
 MonoImporter:
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - customerBall: {instanceID: 0}
+  - sliderText: {instanceID: 0}
+  - sliderNumCustomers: {instanceID: 0}
+  - CustomerSprite: {instanceID: 0}
+  - graphContainer: {instanceID: 0}
+  - redMaterial: {fileID: 2100000, guid: 0ad9dc908ace8ef4b90820cbf07a571c, type: 2}
+  - greenMaterial: {fileID: 2100000, guid: f369788c7330a164cbb2d724e4360c79, type: 2}
+  - blueMaterial: {fileID: 2100000, guid: a4ead93215a964b2ca235b0bfac66cd1, type: 2}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
