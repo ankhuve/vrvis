@@ -9,6 +9,9 @@ public class ButtonInteraction : MonoBehaviour {
 	private VRTK_Button_UnityEvents buttonEvents;
 	public ViewStructureChangeScript viewStructureChangeScript;
 	public int productId;
+	public Material on;
+	public Material off;
+
 
 	// Use this for initialization
 	private void Start () {
@@ -22,9 +25,19 @@ public class ButtonInteraction : MonoBehaviour {
 		buttonEvents.OnPushed.AddListener(viewStructureChangeScript.HighlightProduct);
 	}
 
-	private void handlePush(object sender, Control3DEventArgs e)
+	public void handlePush(object sender, Control3DEventArgs e)
 	{
 		Debug.Log("Pushed");
+		if(GetComponent<Renderer>().sharedMaterial.Equals(on))
+		{
+			GetComponent<Renderer>().material = off;
+			//GetComponent<Renderer>().material = off;
+			print("släcker");
+		} else{
+			GetComponent<Renderer>().material = on;
+			//GetComponent<Renderer>().material = on;
+			print("tänder");
+		}
 	}
 
 	

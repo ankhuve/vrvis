@@ -9,5 +9,6 @@ public class CustomerData : MonoBehaviour {
 	public string name;
 	public int npsScore;
 	public float timeAsCustomerInMonths;
+	public Material productMaterial;
 
 }

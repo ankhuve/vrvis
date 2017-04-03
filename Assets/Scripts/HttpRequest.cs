@@ -15,16 +15,29 @@ public class HttpRequest : MonoBehaviour {
     public GameObject CustomerSprite;
     public GameObject graphContainer;
     public List<GameObject> customerElementList;
+    public VRTK.VRTK_Slider_Custom ageMin;
+    public VRTK.VRTK_Slider_Custom ageMax;
+    public VRTK.VRTK_Slider_Custom NPSMin;
+    public VRTK.VRTK_Slider_Custom NPSMax;
+    public VRTK.VRTK_Slider_Custom customerLengthMin;
+    public VRTK.VRTK_Slider_Custom customerLengthMax;
+    public ViewStructureChangeScript viewStructureChangeScript;
+
     private float maxAge = 0;
     private float minAge = Mathf.Infinity;
     private float maxLengthOfBeingCustomer = 0;
     private float minLengthOfBeingCustomer = Mathf.Infinity;
+    private bool customersAreGenerated = false;
 
     //Materials
 
     public Material cyanMaterial;
     public Material magentaMaterial;
     public Material yellowMaterial;
+    public Material fadedMaterial;
+
+    private int numHighlightedCustomers;
+    public TextMesh numCustomersText;
 
 	// Use this for initialization
 	void Start () {
@@ -34,11 +47,57 @@ public class HttpRequest : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		
+		//Check filters - if moved?
+        if (customersAreGenerated) {
+            numHighlightedCustomers = 0;
+            Transform productsContainer = graphContainer.transform.Find("Products");
+            foreach(Transform product in productsContainer) {
+
+                if(viewStructureChangeScript.currentlyHighlighted.Contains(product.GetComponent<CustomerData>().productCategoryId))
+                {
+                    CustomerData custData = product.GetComponent<CustomerData>();
+                    if (
+                        //Allow age = 0 to be Random, but change to
+                            custData.age < ageMin.GetValue() ||
+                            custData.age > ageMax.GetValue() ||
+                            custData.npsScore < NPSMin.GetValue() ||
+                            custData.npsScore > NPSMax.GetValue() ||
+                            custData.timeAsCustomerInMonths < customerLengthMin.GetValue() ||
+                            custData.timeAsCustomerInMonths > customerLengthMax.GetValue()
+                        ) {
+                        //Set faded material
+                        product.transform.GetChild(0).GetComponent<Renderer>().material = fadedMaterial;
+                    }
+                    else {
+                        //set previous material
+                        product.transform.GetChild(0).GetComponent<Renderer>().material = custData.productMaterial;
+                        numHighlightedCustomers++;
+                    }
+                } else{
+                    //Set faded material
+                    product.transform.GetChild(0).GetComponent<Renderer>().material = fadedMaterial;
+                }
+
+            }
+            numCustomersText.text = numHighlightedCustomers.ToString();
+        }
 	}
+
+    public int getNrOfHighlightedCustomers() {
+        //Count customers
+        int cCounter = 0;
+        Transform productsContainer = graphContainer.transform.Find("Products");
+        foreach(Transform product in productsContainer) {
+            if (product.transform.GetChild(0).GetComponent<Renderer>().material != fadedMaterial) {
+                cCounter++;
+            }
+        }
+        return cCounter;
+    }
 
     public void SendProductRequest() {
         StopAllCoroutines();
+        RemoveCustomers();
         StartCoroutine(GetCustomersWithProducts());
     }
 
@@ -68,9 +127,21 @@ public class HttpRequest : MonoBehaviour {
                      }
                 // }
             }
+            //set min age and max age for slider
+            ageMin.minimumValue = minAge;
+            ageMin.maximumValue = maxAge;
+            ageMax.minimumValue = minAge;
+            ageMax.maximumValue = maxAge;
+            //Set customer length for slider
+            customerLengthMin.minimumValue = minLengthOfBeingCustomer;
+            customerLengthMin.maximumValue = maxLengthOfBeingCustomer;
+            customerLengthMax.minimumValue = minLengthOfBeingCustomer;
+            customerLengthMax.maximumValue = maxLengthOfBeingCustomer;
     }
 
     IEnumerator GetCustomersWithProducts() {
+        //Set bool
+        customersAreGenerated = false;
         // Create a Web Form
 		WWWForm form = new WWWForm();
 
@@ -100,7 +171,8 @@ public class HttpRequest : MonoBehaviour {
 
             CalculateMinMaxValues(customerData);
 
-            print("minAge: " + minAge + "\nmaxAge: " + maxAge + "\nmaxLengthOfCustomer: " + maxLengthOfBeingCustomer + "\nminLengthOfCustomer" + minLengthOfBeingCustomer);
+            print("minAge: " + minAge + "\nmaxAge: " + maxAge);
+            print("\nmaxLengthOfCustomer: " + maxLengthOfBeingCustomer + "\nminLengthOfCustomer: " + minLengthOfBeingCustomer);
 
             int customerCount = 0;
             // For every customer with that product
@@ -133,12 +205,15 @@ public class HttpRequest : MonoBehaviour {
                         if(customer["pivot"]["product_id"].f == 1f) {
                             //set red material
                             customerObj.transform.GetChild(0).GetComponent<Renderer>().material = cyanMaterial;
+                            customerData.productMaterial = cyanMaterial;
                         }
                         else if (customer["pivot"]["product_id"].f == 2f) {
                             customerObj.transform.GetChild(0).GetComponent<Renderer>().material = magentaMaterial;
+                            customerData.productMaterial = magentaMaterial;
                         }
                         else if (customer["pivot"]["product_id"].f == 6f) {
                             customerObj.transform.GetChild(0).GetComponent<Renderer>().material = yellowMaterial;
+                            customerData.productMaterial = yellowMaterial;
                         }
                         customerData.productCategoryId = (int) customer["pivot"]["product_id"].f;
                     }
@@ -194,6 +269,11 @@ public class HttpRequest : MonoBehaviour {
                 }
                 customerCount++;
             }
+            //Tell app that customers have been generated
+            customersAreGenerated = true;
+            //Bad fix for bug
+            ageMin.GetComponent<ConfigurableJoint>().xMotion = ConfigurableJointMotion.Free;
+            ageMax.GetComponent<ConfigurableJoint>().xMotion = ConfigurableJointMotion.Free;
 		}
     }
 

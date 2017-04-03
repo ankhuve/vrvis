@@ -12,47 +12,32 @@ public class ViewStructureChangeScript : MonoBehaviour {
 	public List<Material> transparentMaterials;
 	public Material fadedMaterial;
 
-	protected List<int> currentlyHighlighted;
+	public List<int> currentlyHighlighted;
 
 	// Use this for initialization
 	void Start () {
 		currentlyHighlighted = new List<int>();
+		currentlyHighlighted.Add(1);
+		currentlyHighlighted.Add(2);
+		currentlyHighlighted.Add(6);
 	}
 	
-	// Update is called once per frame
-	void Update () {
-		
-	}
-
 	public void HighlightProduct(object sender, Control3DEventArgs e){
 		VRTK.VRTK_Button btn = (VRTK.VRTK_Button) sender;
 		int productToHighlight = btn.gameObject.GetComponent<ButtonInteraction>().productId;
 		print("Pusheeeed " + productToHighlight);
 
-		currentlyHighlighted.Add(productToHighlight);
-/* 
-		for (int i = 1; i <= products.transform.childCount; i++)
-		{
-			GameObject productContainer = GameObject.Find("product-" + (i - 1));
-			// print(productContainer.transform.childCount);
+		btn.gameObject.GetComponent<ButtonInteraction>().handlePush(sender, e);
 
-			if(i == productToHighlight){
-				// den här vill vi highlighta
-				for(int j = 0; j < productContainer.transform.childCount; j++)
-				{
-					GameObject customer = productContainer.transform.GetChild(j).gameObject;
-					customer.GetComponentInChildren<MeshRenderer>().material = opaqueMaterials[productToHighlight % products.transform.childCount];
-				}
-			} 
-			else{
-				for(int j = 0; j < productContainer.transform.childCount; j++)
-				{
-					GameObject customer = productContainer.transform.GetChild(j).gameObject;
-					// print(customer.GetComponentInChildren<Renderer>().material.color);
-					customer.GetComponentInChildren<MeshRenderer>().material = fadedMaterial;
-				}
-			}
+		if(currentlyHighlighted.Contains(productToHighlight))
+		{
+			currentlyHighlighted.Remove(productToHighlight);
+			print("tar bort " + productToHighlight);
+		} else
+		{
+			currentlyHighlighted.Add(productToHighlight);
+			print("addar " + productToHighlight);
+			
 		}
-		*/
 	}
 }
