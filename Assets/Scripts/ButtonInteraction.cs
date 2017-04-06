@@ -25,6 +25,16 @@ public class ButtonInteraction : MonoBehaviour {
 		buttonEvents.OnPushed.AddListener(viewStructureChangeScript.HighlightProduct);
 	}
 
+	void OnEnable() {
+		if(viewStructureChangeScript.currentlyHighlighted.Contains(productId))
+		{
+			GetComponent<Renderer>().material = on;
+		} else
+		{
+			GetComponent<Renderer>().material = off;
+		}
+    }
+
 	public void handlePush(object sender, Control3DEventArgs e)
 	{
 		Debug.Log("Pushed");
@@ -34,6 +44,7 @@ public class ButtonInteraction : MonoBehaviour {
 			//GetComponent<Renderer>().material = off;
 			print("släcker");
 		} else{
+			// VRTK_SharedMethods.TriggerHapticPulse(0, 1, 0.3f, 0.02f);
 			GetComponent<Renderer>().material = on;
 			//GetComponent<Renderer>().material = on;
 			print("tänder");

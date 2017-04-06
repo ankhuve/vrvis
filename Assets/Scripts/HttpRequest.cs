@@ -6,6 +6,7 @@ using System.Collections.Generic;
 public class HttpRequest : MonoBehaviour {
 
     public GameObject customerBall;
+    public GameObject highlightArea;
     public int numberOfCustomersToGet;
     public Text sliderText;
     public VRTK.VRTK_Slider_Custom sliderNumCustomers;
@@ -81,6 +82,7 @@ public class HttpRequest : MonoBehaviour {
             }
             numCustomersText.text = numHighlightedCustomers.ToString();
         }
+        setHightlightSizePos(ageMin, ageMax, NPSMin, NPSMax, customerLengthMin, customerLengthMax);
 	}
 
     public int getNrOfHighlightedCustomers() {
@@ -99,6 +101,20 @@ public class HttpRequest : MonoBehaviour {
         StopAllCoroutines();
         RemoveCustomers();
         StartCoroutine(GetCustomersWithProducts());
+    }
+
+    private void setHightlightSizePos(VRTK.VRTK_Slider_Custom ageMin, VRTK.VRTK_Slider_Custom ageMax, VRTK.VRTK_Slider_Custom NPSMin, VRTK.VRTK_Slider_Custom NPSMax, VRTK.VRTK_Slider_Custom customerLengthMin, VRTK.VRTK_Slider_Custom customerLengthMax) {
+        //Sets hightlight based on vals
+        Transform hlTransform = highlightArea.transform;
+        float xPos = customerLengthMin.gameObject.transform.localPosition.x + 0.5f;
+        float yPos = NPSMin.gameObject.transform.localPosition.x + 0.5f;
+        float zPos = ageMin.gameObject.transform.localPosition.x + 0.5f;
+        float xScale = (customerLengthMax.gameObject.transform.localPosition.x+0.5f) - (customerLengthMin.gameObject.transform.localPosition.x+0.5f);
+        float yScale = (NPSMax.gameObject.transform.localPosition.x+0.6f) - (NPSMin.gameObject.transform.localPosition.x+0.5f);
+        float zScale = (ageMax.gameObject.transform.localPosition.x+0.5f) - (ageMin.gameObject.transform.localPosition.x+0.5f);
+
+        hlTransform.localPosition = new Vector3(-((xPos*10)-5f),(yPos*10),-(zPos*10));
+        hlTransform.localScale = new Vector3(-(xScale*10), (yScale*10), (zScale*10));
     }
 
     private void CalculateMinMaxValues(JSONObject customerData) {
@@ -198,7 +214,7 @@ public class HttpRequest : MonoBehaviour {
                         // xPos = customer["age"].f / 30;
                     } else{
                         xPos = Mathf.Abs(Random.insideUnitCircle.x);
-                        print("dunno: " + xPos);
+                        print(customerObj);
                     }
 
                     if(customer.HasField("pivot") && customer["pivot"].HasField("product_id")) {
