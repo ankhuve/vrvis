@@ -11,4 +11,13 @@ public class CustomerData : MonoBehaviour {
 	public float timeAsCustomerInMonths;
 	public Material productMaterial;
 
+	public void reset() {
+		productCategoryId = -1;
+		age = -1;
+		name = null;
+		npsScore = -1;
+		timeAsCustomerInMonths = -1f;
+		productMaterial = null;
+	}
+
 }

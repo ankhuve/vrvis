@@ -51,6 +51,29 @@ public class ButtonInteraction : MonoBehaviour {
 		}
 	}
 
+	public void SetActive(bool active){
+		if(!active)
+		{
+			gameObject.GetComponent<Collider>().enabled = false;
+			gameObject.GetComponent<VRTK_InteractHaptics>().enabled = false;
+			transform.GetChild(1).gameObject.SetActive(false);
+			gameObject.GetComponent<VRTK_Button>().enabled = false;
+			transform.parent.localScale = Vector3.zero;//yMotion = ConfigurableJointMotion.Locked;
+		} else{
+			transform.parent.localScale = Vector3.one;//yMotion = ConfigurableJointMotion.Limited;
+			transform.GetChild(1).gameObject.SetActive(true);
+			gameObject.GetComponent<VRTK_Button>().enabled = true;
+			gameObject.GetComponent<VRTK_InteractHaptics>().enabled = true;
+			gameObject.GetComponent<Collider>().enabled = true;
+			if(viewStructureChangeScript.currentlyHighlighted.Contains(GetComponent<ButtonInteraction>().productId))
+			{
+				GetComponent<Renderer>().material = GetComponent<ButtonInteraction>().on;
+			} else{
+				GetComponent<Renderer>().material = GetComponent<ButtonInteraction>().off;
+			}
+		}
+	}
+
 	
 	// public void OnMouseDown() {
 	// 	print("mousedown");

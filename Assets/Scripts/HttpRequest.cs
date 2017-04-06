@@ -23,6 +23,7 @@ public class HttpRequest : MonoBehaviour {
     public VRTK.VRTK_Slider_Custom customerLengthMin;
     public VRTK.VRTK_Slider_Custom customerLengthMax;
     public ViewStructureChangeScript viewStructureChangeScript;
+    public int totalAmountOfCustomers = 0;
 
     private float maxAge = 0;
     private float minAge = Mathf.Infinity;
@@ -78,9 +79,8 @@ public class HttpRequest : MonoBehaviour {
                     //Set faded material
                     product.transform.GetChild(0).GetComponent<Renderer>().material = fadedMaterial;
                 }
-
             }
-            numCustomersText.text = numHighlightedCustomers.ToString();
+            numCustomersText.text = numHighlightedCustomers.ToString() + "\n/" + totalAmountOfCustomers;
         }
         setHightlightSizePos(ageMin, ageMax, NPSMin, NPSMax, customerLengthMin, customerLengthMax);
 	}
@@ -196,6 +196,7 @@ public class HttpRequest : MonoBehaviour {
             {
                 // Skips first object with only count data
                 if(customer.HasField("id")){
+                    
                     //GameObject customerObj =  (GameObject) Instantiate(customerElementList[pCount]);
                     
                     //Get object by index from object pool, will fail if over 1000 (implement guard for this)
@@ -205,17 +206,20 @@ public class HttpRequest : MonoBehaviour {
                     float xPos;
                     if(customer.HasField("age")){
                         // (maxAge - minAge) / 2
-                        xPos = (1 / (maxAge - minAge)) * (customer["age"].f - minAge);
-                        if(xPos < 0){
-                            print(customer["age"]);
-                        }
-                        //Set age to script
+
                         customerData.age = (int) customer["age"].f;
                         // xPos = customer["age"].f / 30;
                     } else{
-                        xPos = Mathf.Abs(Random.insideUnitCircle.x);
-                        print(customerObj);
+                        customerData.age = (int) Random.Range(minAge, maxAge);
+                        //xPos = Mathf.Abs(Random.insideUnitCircle.x);
+                        //print(customerObj);
                     }
+
+                    xPos = (1 / (maxAge - minAge)) * (customerData.age - minAge);
+                    if(xPos < 0){
+                        print("WTF");
+                    }
+                    //Set age to script
 
                     if(customer.HasField("pivot") && customer["pivot"].HasField("product_id")) {
                         if(customer["pivot"]["product_id"].f == 1f) {
@@ -282,11 +286,13 @@ public class HttpRequest : MonoBehaviour {
                     //     print(key + ": " + customer[key]);
                         
                     // }
+                    customerCount++;
                 }
-                customerCount++;
+                
             }
             //Tell app that customers have been generated
             customersAreGenerated = true;
+            totalAmountOfCustomers = customerCount;
             //Bad fix for bug
             ageMin.GetComponent<ConfigurableJoint>().xMotion = ConfigurableJointMotion.Free;
             ageMax.GetComponent<ConfigurableJoint>().xMotion = ConfigurableJointMotion.Free;
@@ -295,7 +301,7 @@ public class HttpRequest : MonoBehaviour {
 
     public void SetNumOfCustomersToGet() {
         numberOfCustomersToGet = (int) sliderNumCustomers.GetValue();
-        sliderText.text = numberOfCustomersToGet.ToString();
+        // sliderText.text = numberOfCustomersToGet.ToString();
 
         // print(numberOfCustomersToGet);
     }
@@ -306,6 +312,7 @@ public class HttpRequest : MonoBehaviour {
         foreach (Transform customer in productsContainer) {
             // Kill all children >:)
             //GameObject.Destroy(product.gameObject);
+            customer.GetComponent<CustomerData>().reset();
             customer.gameObject.SetActive(false);
         }
     }

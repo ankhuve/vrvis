@@ -1,11 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using VRTK;
 
 public class RotateToFaceUser : MonoBehaviour {
 
 	public GameObject head;
 	public bool onlyRotateHorizontal;
+	public List<GameObject> buttonSets;
+	public ViewStructureChangeScript viewStructureChangeScript;
 
 	// Use this for initialization
 	void Start () {
@@ -38,21 +41,19 @@ public class RotateToFaceUser : MonoBehaviour {
 
 	// index is the button set to be enabled, all others will be disabled
 	void EnableButtonSet(int index){
+		// print("Trying to instantiate " + index);
 		for (int i = 0; i < transform.childCount; i++){
 			if(index == i){
-				transform.GetChild(i).gameObject.SetActive(true);
 				foreach (Transform button in transform.GetChild(i))
 				{
-					button.GetChild(0).gameObject.GetComponent<ConfigurableJoint>().autoConfigureConnectedAnchor = false;//yMotion = ConfigurableJointMotion.Limited;
+					button.GetChild(0).GetComponent<ButtonInteraction>().SetActive(true);
 				}
-				//transform.GetChild(i).gameObject.GetComponent<ConfigurableJoint>().yMotion = ConfigurableJointMotion.Limited;				
+				// transform.GetChild(i).gameObject.GetComponent<ConfigurableJoint>().yMotion = ConfigurableJointMotion.Limited;				
 			} else{
 				foreach (Transform button in transform.GetChild(i))
 				{
-					button.GetChild(0).gameObject.GetComponent<ConfigurableJoint>().autoConfigureConnectedAnchor = true;//yMotion = ConfigurableJointMotion.Locked;
+					button.GetChild(0).GetComponent<ButtonInteraction>().SetActive(false);
 				}
-				//transform.GetChild(i).gameObject.GetComponent<ConfigurableJoint>().yMotion = ConfigurableJointMotion.Locked;
-				transform.GetChild(i).gameObject.SetActive(false);
 			}
 		}
 	}
