@@ -118,6 +118,11 @@ public class HttpRequest : MonoBehaviour {
     }
 
     private void CalculateMinMaxValues(JSONObject customerData) {
+        maxAge = 0;
+        minAge = Mathf.Infinity;
+        maxLengthOfBeingCustomer = 0;
+        minLengthOfBeingCustomer = Mathf.Infinity;
+        
         foreach (JSONObject customer in customerData.list)
             {
                 //foreach (JSONObject customer in product.list)
