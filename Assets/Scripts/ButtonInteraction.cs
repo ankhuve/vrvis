@@ -11,6 +11,7 @@ public class ButtonInteraction : MonoBehaviour {
 	public int productId;
 	public Material on;
 	public Material off;
+	public DataLogger dataLogger;
 
 
 	// Use this for initialization
@@ -49,6 +50,9 @@ public class ButtonInteraction : MonoBehaviour {
 			//GetComponent<Renderer>().material = on;
 			print("tänder");
 		}
+
+		// logga klick
+		dataLogger.IncrementButtonClicks();
 	}
 
 	public void SetActive(bool active){
@@ -61,6 +65,9 @@ public class ButtonInteraction : MonoBehaviour {
 			transform.parent.localScale = Vector3.zero;//yMotion = ConfigurableJointMotion.Locked;
 		} else{
 			transform.parent.localScale = Vector3.one;//yMotion = ConfigurableJointMotion.Limited;
+			if(transform.GetChild(1).gameObject.active != true){
+				dataLogger.IncrementParticipantChangedSide();
+			}
 			transform.GetChild(1).gameObject.SetActive(true);
 			gameObject.GetComponent<VRTK_Button>().enabled = true;
 			gameObject.GetComponent<VRTK_InteractHaptics>().enabled = true;

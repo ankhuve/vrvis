@@ -33,6 +33,7 @@ namespace VRTK
         [Tooltip("The amount of friction the slider will have when it is released.")]
         public float releasedFriction = 50f;
         public GameObject APIHandler;
+        public DataLogger dataLogger;
 
         protected Direction finalDirection;
         protected Rigidbody sliderRigidbody;
@@ -64,6 +65,16 @@ namespace VRTK
             InitInteractableObject();
             InitJoint();
             highlighter = GetComponent<Highlighters.VRTK_OutlineObjectCopyHighlighter>();
+
+            sliderInteractableObject.InteractableObjectUngrabbed += (s,e) => {
+                dataLogger.StopSliderUse();
+            };
+
+            // log clicks
+            sliderInteractableObject.InteractableObjectGrabbed += (s,e) => {
+                dataLogger.StartSliderUse();
+                dataLogger.IncrementSliderUses();
+            };
         }
 
         protected override bool DetectSetup()
