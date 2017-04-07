@@ -7,7 +7,7 @@ public class HttpRequest : MonoBehaviour {
 
     public GameObject customerBall;
     public GameObject highlightArea;
-    public int numberOfCustomersToGet;
+    public int numberOfCustomersToGet = 675;
     public Text sliderText;
     public VRTK.VRTK_Slider_Custom sliderNumCustomers;
     protected GameObject customerContainer;
@@ -44,8 +44,9 @@ public class HttpRequest : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         WWWForm form = new WWWForm();
-		StartCoroutine(GetCustomersWithProducts(form));
-        SetNumOfCustomersToGet();
+        CallSegmentOrderBy();
+		//StartCoroutine(GetCustomersWithProducts(form));
+        // SetNumOfCustomersToGet();
 	}
 	
 	// Update is called once per frame
@@ -233,7 +234,8 @@ public class HttpRequest : MonoBehaviour {
                         customerData.age = (int) customer["age"].f;
                         // xPos = customer["age"].f / 30;
                     } else{
-                        customerData.age = (int) Random.Range(minAge, maxAge);
+                        // customerData.age = (int) Random.Range(minAge, maxAge);
+                        customerData.age = 42;
                         //xPos = Mathf.Abs(Random.insideUnitCircle.x);
                         //print(customerObj);
                     }
