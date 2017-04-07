@@ -32,6 +32,7 @@ namespace VRTK
         public bool snapToStep = false;
         [Tooltip("The amount of friction the slider will have when it is released.")]
         public float releasedFriction = 50f;
+        public GameObject APIHandler;
 
         protected Direction finalDirection;
         protected Rigidbody sliderRigidbody;
@@ -42,6 +43,8 @@ namespace VRTK
         protected Vector3 snapPosition;
         protected Vector3 minPoint;
         protected Vector3 maxPoint;
+        protected VRTK_InteractableObject sliderInteractableObject;
+        protected Highlighters.VRTK_OutlineObjectCopyHighlighter highlighter;
 
         protected override void OnDrawGizmos()
         {
@@ -60,6 +63,7 @@ namespace VRTK
             InitRigidbody();
             InitInteractableObject();
             InitJoint();
+            highlighter = GetComponent<Highlighters.VRTK_OutlineObjectCopyHighlighter>();
         }
 
         protected override bool DetectSetup()
@@ -152,6 +156,15 @@ namespace VRTK
         protected override void HandleUpdate()
         {
             CalculateValue();
+
+            // keep the slider lit while sliding
+            if(sliderInteractableObject.IsGrabbed())
+            {
+                highlighter.Highlight(sliderInteractableObject.touchHighlightColor);
+            }
+
+            //APIHandler.GetComponent<HttpRequest>().SetNumOfCustomersToGet();
+
             if (snapToStep)
             {
                 SnapToValue();
@@ -212,7 +225,7 @@ namespace VRTK
 
         protected virtual void InitInteractableObject()
         {
-            VRTK_InteractableObject sliderInteractableObject = GetComponent<VRTK_InteractableObject>();
+            sliderInteractableObject = GetComponent<VRTK_InteractableObject>();
             if (sliderInteractableObject == null)
             {
                 sliderInteractableObject = gameObject.AddComponent<VRTK_InteractableObject>();

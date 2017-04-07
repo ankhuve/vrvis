@@ -1,0 +1,66 @@
+﻿Merge remote-tracking branch 'refs/remotes/origin/graphTest1' into interaction-slider
+
+# Conflicts:
+#	Assets/Main.unity
+#	Assets/Scripts/HttpRequest.cs
+#
+# It looks like you may be committing a merge.
+# If this is not correct, please remove the file
+#	.git/MERGE_HEAD
+# and try again.
+
+
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+# On branch interaction-slider
+# All conflicts fixed but you are still merging.
+#
+# Changes to be committed:
+#	new file:   Assets/3dGraph3.fbx
+#	new file:   Assets/3dGraph3.fbx.meta
+#	new file:   Assets/GraphTestScene.unity
+#	new file:   Assets/GraphTestScene.unity.meta
+#	new file:   Assets/Materials/InstancedCustomerCategoryBlue.mat
+#	new file:   Assets/Materials/InstancedCustomerCategoryBlue.mat.meta
+#	new file:   Assets/Materials/InstancedCustomerCategoryGreen.mat
+#	new file:   Assets/Materials/InstancedCustomerCategoryGreen.mat.meta
+#	new file:   Assets/Materials/InstancedCustomerCategoryRed.mat
+#	new file:   Assets/Materials/InstancedCustomerCategoryRed.mat.meta
+#	new file:   Assets/Materials/No Name.mat
+#	new file:   Assets/Materials/No Name.mat.meta
+#	new file:   Assets/Materials/Shaders.meta
+#	new file:   Assets/Materials/Shaders/CustomerInstancedSurfaceShader.shader
+#	new file:   Assets/Materials/Shaders/CustomerInstancedSurfaceShader.shader.meta
+#	new file:   Assets/Materials/TransparentCustomerCategoryBlue.mat
+#	new file:   Assets/Materials/TransparentCustomerCategoryBlue.mat.meta
+#	new file:   Assets/Materials/TransparentCustomerCategoryGreen.mat
+#	new file:   Assets/Materials/TransparentCustomerCategoryGreen.mat.meta
+#	new file:   Assets/Materials/TransparentCustomerCategoryRed.mat
+#	new file:   Assets/Materials/TransparentCustomerCategoryRed.mat.meta
+#	new file:   Assets/Materials/unnamed.mat
+#	new file:   Assets/Materials/unnamed.mat.meta
+#	new file:   Assets/Prefabs/3dGraph3.prefab
+#	new file:   Assets/Prefabs/3dGraph3.prefab.meta
+#	new file:   Assets/Prefabs/CustomerElementBlue.prefab
+#	new file:   Assets/Prefabs/CustomerElementBlue.prefab.meta
+#	new file:   Assets/Prefabs/CustomerElementBlueTransparent.prefab
+#	new file:   Assets/Prefabs/CustomerElementBlueTransparent.prefab.meta
+#	new file:   Assets/Prefabs/CustomerElementGreen.prefab
+#	new file:   Assets/Prefabs/CustomerElementGreen.prefab.meta
+#	new file:   Assets/Prefabs/CustomerElementGreenTransparent.prefab
+#	new file:   Assets/Prefabs/CustomerElementGreenTransparent.prefab.meta
+#	new file:   Assets/Prefabs/CustomerElementRed.prefab
+#	new file:   Assets/Prefabs/CustomerElementRed.prefab.meta
+#	new file:   Assets/Prefabs/CustomerElementRedTransparent.prefab
+#	new file:   Assets/Prefabs/CustomerElementRedTransparent.prefab.meta
+#	new file:   Assets/Prefabs/Main Camera.prefab
+#	new file:   Assets/Prefabs/Main Camera.prefab.meta
+#	new file:   Assets/Prefabs/Materials.meta
+#	new file:   Assets/Prefabs/Materials/No Name.mat
+#	new file:   Assets/Prefabs/Materials/No Name.mat.meta
+#	modified:   Assets/Scripts/HttpRequest.cs
+#	new file:   Assets/Sprites.meta
+#	new file:   Assets/Sprites/customerSprite.png
+#	new file:   Assets/Sprites/customerSprite.png.meta
+#
+
