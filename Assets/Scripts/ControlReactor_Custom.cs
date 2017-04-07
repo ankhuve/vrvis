@@ -23,7 +23,36 @@
 
         private void HandleChange(object sender, Control3DEventArgs e)
         {
-            go.text = e.value.ToString() + (unitOfMeasurement != "" ? (" (" + unitOfMeasurement + ((e.value > 1) || (e.value < 1) ? "s)" : ")")) : "");
+            if (unitOfMeasurement == "month" && e.value >= 24) {
+                float newVal = e.value/12f;
+                newVal = Mathf.Round(newVal*2)/2;
+                string myCoolNewString = newVal.ToString("0.#");
+                int maxLength = 3;
+                if (myCoolNewString.Length == 1) {
+                    myCoolNewString += " ";
+                }
+                for (int i = 0; i < maxLength - newVal.ToString().Length; i++) {
+                    myCoolNewString += " ";
+                }
+
+                go.text = myCoolNewString + " (years)";
+
+
+                // if (newVal - Mathf.Round(newVal) != 0) {
+                //     if (newVal.ToString().Length == 2) {
+                //         go.text = newVal.ToString("0.#") + "   (years 10)";
+                //     }
+                //     else{
+                //         go.text = newVal.ToString("0.#") + "(years 1)";
+                //     }
+                // }
+                // else {
+                //     go.text = newVal.ToString("0.#") + " (years)";
+                // }
+            }
+            else {
+                go.text = e.value.ToString() + (unitOfMeasurement != "" ? (" (" + unitOfMeasurement + ((e.value > 1) || (e.value < 1) ? "s)" : ")")) : "");
+            }
         }
     }
 }

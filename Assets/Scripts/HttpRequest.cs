@@ -43,7 +43,8 @@ public class HttpRequest : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		StartCoroutine(GetCustomersWithProducts());
+        WWWForm form = new WWWForm();
+		StartCoroutine(GetCustomersWithProducts(form));
         SetNumOfCustomersToGet();
 	}
 	
@@ -98,9 +99,10 @@ public class HttpRequest : MonoBehaviour {
     }
 
     public void SendProductRequest() {
+        WWWForm form = new WWWForm();
         StopAllCoroutines();
         RemoveCustomers();
-        StartCoroutine(GetCustomersWithProducts());
+        StartCoroutine(GetCustomersWithProducts(form));
     }
 
     private void setHightlightSizePos(VRTK.VRTK_Slider_Custom ageMin, VRTK.VRTK_Slider_Custom ageMax, VRTK.VRTK_Slider_Custom NPSMin, VRTK.VRTK_Slider_Custom NPSMax, VRTK.VRTK_Slider_Custom customerLengthMin, VRTK.VRTK_Slider_Custom customerLengthMax) {
@@ -110,7 +112,7 @@ public class HttpRequest : MonoBehaviour {
         float yPos = NPSMin.gameObject.transform.localPosition.x + 0.5f;
         float zPos = ageMin.gameObject.transform.localPosition.x + 0.5f;
         float xScale = (customerLengthMax.gameObject.transform.localPosition.x+0.5f) - (customerLengthMin.gameObject.transform.localPosition.x+0.5f);
-        float yScale = (NPSMax.gameObject.transform.localPosition.x+0.6f) - (NPSMin.gameObject.transform.localPosition.x+0.5f);
+        float yScale = (NPSMax.gameObject.transform.localPosition.x+0.5f) - (NPSMin.gameObject.transform.localPosition.x+0.5f);
         float zScale = (ageMax.gameObject.transform.localPosition.x+0.5f) - (ageMin.gameObject.transform.localPosition.x+0.5f);
 
         hlTransform.localPosition = new Vector3(-((xPos*10)-5f),(yPos*10),-(zPos*10));
@@ -122,7 +124,7 @@ public class HttpRequest : MonoBehaviour {
         minAge = Mathf.Infinity;
         maxLengthOfBeingCustomer = 0;
         minLengthOfBeingCustomer = Mathf.Infinity;
-        
+
         foreach (JSONObject customer in customerData.list)
             {
                 //foreach (JSONObject customer in product.list)
@@ -160,11 +162,27 @@ public class HttpRequest : MonoBehaviour {
             customerLengthMax.maximumValue = maxLengthOfBeingCustomer;
     }
 
-    IEnumerator GetCustomersWithProducts() {
+    public void CallSegmentOrderBy () {
+        StopAllCoroutines();
+        WWWForm form = new WWWForm();
+        form.AddField("segment","1");
+        RemoveCustomers();
+        StartCoroutine(GetCustomersWithProducts(form));
+    }
+
+    public void CallSegmentNotOrderBy () {
+        StopAllCoroutines();
+        WWWForm form = new WWWForm();
+        form.AddField("segment","0");
+        RemoveCustomers();
+        StartCoroutine(GetCustomersWithProducts(form));
+    }
+
+    IEnumerator GetCustomersWithProducts(WWWForm form) {
         //Set bool
         customersAreGenerated = false;
         // Create a Web Form
-		WWWForm form = new WWWForm();
+		//WWWForm form = new WWWForm();
 
         // Number of customers to get with the request
 		form.AddField("product_id", "1,2,6");
@@ -309,6 +327,13 @@ public class HttpRequest : MonoBehaviour {
         // sliderText.text = numberOfCustomersToGet.ToString();
 
         // print(numberOfCustomersToGet);
+    }
+
+    public void updateNumCustomersFromCanvas(Slider sender) {
+        print("UPDATING");
+        print(sender.value.ToString());
+        numberOfCustomersToGet = (int) sender.value;
+        print(numberOfCustomersToGet);
     }
 
     public void RemoveCustomers() {

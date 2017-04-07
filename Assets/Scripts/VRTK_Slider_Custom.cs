@@ -43,6 +43,8 @@ namespace VRTK
         protected Vector3 snapPosition;
         protected Vector3 minPoint;
         protected Vector3 maxPoint;
+        protected VRTK_InteractableObject sliderInteractableObject;
+        protected Highlighters.VRTK_OutlineObjectCopyHighlighter highlighter;
 
         protected override void OnDrawGizmos()
         {
@@ -61,6 +63,7 @@ namespace VRTK
             InitRigidbody();
             InitInteractableObject();
             InitJoint();
+            highlighter = GetComponent<Highlighters.VRTK_OutlineObjectCopyHighlighter>();
         }
 
         protected override bool DetectSetup()
@@ -154,7 +157,13 @@ namespace VRTK
         {
             CalculateValue();
 
-            APIHandler.GetComponent<HttpRequest>().SetNumOfCustomersToGet();
+            // keep the slider lit while sliding
+            if(sliderInteractableObject.IsGrabbed())
+            {
+                highlighter.Highlight(sliderInteractableObject.touchHighlightColor);
+            }
+
+            //APIHandler.GetComponent<HttpRequest>().SetNumOfCustomersToGet();
 
             if (snapToStep)
             {
@@ -216,7 +225,7 @@ namespace VRTK
 
         protected virtual void InitInteractableObject()
         {
-            VRTK_InteractableObject sliderInteractableObject = GetComponent<VRTK_InteractableObject>();
+            sliderInteractableObject = GetComponent<VRTK_InteractableObject>();
             if (sliderInteractableObject == null)
             {
                 sliderInteractableObject = gameObject.AddComponent<VRTK_InteractableObject>();
