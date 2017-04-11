@@ -42,19 +42,27 @@ public class DataLogger : MonoBehaviour {
 	}
 
 	public void IncrementButtonClicks(){
-		buttonClicks++;
+		if (isDoingTasks) {
+			buttonClicks++;
+		}
 	}
 
 	public void IncrementSliderUses(){
-		sliderUses++;
+		if (isDoingTasks) {
+			sliderUses++;
+		}
 	}
 
 	public void IncrementParticipantChangedSide(){
-		sideChanges += 1f/3;
+		if (isDoingTasks) {
+			sideChanges += 1f/3;
+		}
 	}
 
 	public void StartSliderUse(){
-		isUsingSlider = true;
+		if (isDoingTasks) {
+			isUsingSlider = true;
+		}
 	}
 
 	public void StopSliderUse(){
