@@ -47,6 +47,15 @@ namespace VRTK
         protected VRTK_InteractableObject sliderInteractableObject;
         protected Highlighters.VRTK_OutlineObjectCopyHighlighter highlighter;
 
+
+        public struct SliderValueChangeEventArgs
+        {
+            public GameObject interactingSlider;
+        }
+        
+        public delegate void SliderHighlightEventHandler(object sender, SliderValueChangeEventArgs e);
+        public event SliderHighlightEventHandler OnSlide;
+
         protected override void OnDrawGizmos()
         {
             base.OnDrawGizmos();
@@ -172,6 +181,12 @@ namespace VRTK
             if(sliderInteractableObject.IsGrabbed())
             {
                 highlighter.Highlight(sliderInteractableObject.touchHighlightColor);
+                if(!APIHandler.GetComponent<HttpRequest>().grabbedSliders.Contains(sliderInteractableObject.GetGrabbingObject())){
+                    APIHandler.GetComponent<HttpRequest>().grabbedSliders.Add(sliderInteractableObject.GetGrabbingObject());
+                }
+            }
+            else {
+                APIHandler.GetComponent<HttpRequest>().grabbedSliders.Remove(sliderInteractableObject.GetGrabbingObject());
             }
 
             //APIHandler.GetComponent<HttpRequest>().SetNumOfCustomersToGet();

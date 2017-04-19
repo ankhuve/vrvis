@@ -12,6 +12,7 @@ public class ButtonInteraction : MonoBehaviour {
 	public Material on;
 	public Material off;
 	public DataLogger dataLogger;
+	public GameObject productTextMeshes;
 
 
 	// Use this for initialization
@@ -33,7 +34,7 @@ public class ButtonInteraction : MonoBehaviour {
 		} else
 		{
 			GetComponent<Renderer>().material = off;
-		}
+		}	
     }
 
 	public void handlePush(object sender, Control3DEventArgs e)
@@ -43,13 +44,15 @@ public class ButtonInteraction : MonoBehaviour {
 		{
 			GetComponent<Renderer>().material = off;
 			//GetComponent<Renderer>().material = off;
-			print("släcker");
 		} else{
 			// VRTK_SharedMethods.TriggerHapticPulse(0, 1, 0.3f, 0.02f);
 			GetComponent<Renderer>().material = on;
 			//GetComponent<Renderer>().material = on;
-			print("tänder");
 		}
+
+		// toggle color of the product text on the hand display
+		productTextMeshes.transform.FindChild(productId.ToString()).GetComponent<ColorChanger>().ToggleActive();
+		productTextMeshes.transform.FindChild(productId.ToString()).GetChild(0).GetComponent<ColorChanger>().ToggleActive();
 
 		// logga klick
 		dataLogger.IncrementButtonClicks();

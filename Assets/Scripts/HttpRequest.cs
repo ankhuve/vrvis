@@ -31,16 +31,25 @@ public class HttpRequest : MonoBehaviour {
     private float maxLengthOfBeingCustomer = 0;
     private float minLengthOfBeingCustomer = Mathf.Infinity;
     private bool customersAreGenerated = false;
+    // protected List<int> productCounts = new List<int>();
+    protected List<int> productCounts = new List<int>();
+
 
     //Materials
-
     public Material cyanMaterial;
     public Material magentaMaterial;
     public Material yellowMaterial;
     public Material fadedMaterial;
 
     private int numHighlightedCustomers;
+    protected List<int> highlightedProductCounts = new List<int>();
     public TextMesh numCustomersText;
+    public TextMesh totalAmountOfCustomersText;
+    public GameObject highlightedProductsTexts;
+    public List<GameObject> grabbedSliders = new List<GameObject>();
+
+    
+    
 
 	// Use this for initialization
 	void Start () {
@@ -48,13 +57,22 @@ public class HttpRequest : MonoBehaviour {
         CallSegmentOrderBy();
 		//StartCoroutine(GetCustomersWithProducts(form));
         // SetNumOfCustomersToGet();
+
+        highlightedProductCounts.Add(0);
+        highlightedProductCounts.Add(0);
+        highlightedProductCounts.Add(0);
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		//Check filters - if moved?
         if (customersAreGenerated) {
+            // reset all counts
             numHighlightedCustomers = 0;
+            highlightedProductCounts[0] = 0;
+            highlightedProductCounts[1] = 0;
+            highlightedProductCounts[2] = 0;
+
             Transform productsContainer = graphContainer.transform.Find("Products");
             foreach(Transform product in productsContainer) {
 
@@ -77,13 +95,46 @@ public class HttpRequest : MonoBehaviour {
                         //set previous material
                         product.transform.GetChild(0).GetComponent<Renderer>().material = custData.productMaterial;
                         numHighlightedCustomers++;
+
+                        if(product.GetComponent<CustomerData>().productCategoryId == 1)
+                        {
+                            highlightedProductCounts[0]++;
+                        }
+                        else if(product.GetComponent<CustomerData>().productCategoryId == 2)
+                        {
+                            highlightedProductCounts[1]++;
+                        }
+                        else if(product.GetComponent<CustomerData>().productCategoryId == 6)
+                        {
+                            highlightedProductCounts[2]++;
+                        } 
+
                     }
                 } else{
                     //Set faded material
                     product.transform.GetChild(0).GetComponent<Renderer>().material = fadedMaterial;
+
+                    foreach (GameObject slider in grabbedSliders)
+                    {
+                        VRTK.VRTK_InteractableObject sliderInteractableObject = slider.GetComponent<VRTK.VRTK_InteractableObject>();
+                        VRTK.VRTK_SharedMethods.TriggerHapticPulse(VRTK.VRTK_DeviceFinder.GetControllerIndex(sliderInteractableObject.GetGrabbingObject()), sliderInteractableObject.gameObject.GetComponent<VRTK.VRTK_InteractHaptics>().strengthOnTouch, sliderInteractableObject.gameObject.GetComponent<VRTK.VRTK_InteractHaptics>().durationOnTouch, sliderInteractableObject.gameObject.GetComponent<VRTK.VRTK_InteractHaptics>().intervalOnTouch);
+                    }
+
                 }
             }
-            numCustomersText.text = numHighlightedCustomers.ToString() + "\n/" + totalAmountOfCustomers;
+            numCustomersText.text = numHighlightedCustomers.ToString();
+
+            // calculate the percentage of total customers highlighted
+            totalAmountOfCustomersText.text = "(" + Mathf.Round(((float)numHighlightedCustomers/(float)totalAmountOfCustomers) * 100).ToString() + "%)";
+            int idx = 0;
+            foreach (Transform productText in highlightedProductsTexts.transform)
+            {
+                int highlightedProductCount = highlightedProductCounts[idx];
+                productText.GetComponent<TextMesh>().text = highlightedProductCount.ToString();
+                productText.GetChild(0).GetComponent<TextMesh>().text = "(" + Mathf.Round(((float) highlightedProductCount / (float) productCounts[idx]) * 100) + "%)";
+                idx++;
+            }
+            
         }
         setHightlightSizePos(ageMin, ageMax, NPSMin, NPSMax, customerLengthMin, customerLengthMax);
 	}
@@ -158,10 +209,10 @@ public class HttpRequest : MonoBehaviour {
             ageMax.minimumValue = minAge;
             ageMax.maximumValue = maxAge;
             //Set customer length for slider
-            customerLengthMin.minimumValue = minLengthOfBeingCustomer;
-            customerLengthMin.maximumValue = maxLengthOfBeingCustomer;
-            customerLengthMax.minimumValue = minLengthOfBeingCustomer;
-            customerLengthMax.maximumValue = maxLengthOfBeingCustomer;
+            customerLengthMin.minimumValue = Mathf.Floor(minLengthOfBeingCustomer);
+            customerLengthMin.maximumValue = Mathf.Ceil(maxLengthOfBeingCustomer);
+            customerLengthMax.minimumValue = Mathf.Floor(minLengthOfBeingCustomer);
+            customerLengthMax.maximumValue = Mathf.Ceil(maxLengthOfBeingCustomer);
     }
 
     public void CallSegmentOrderBy () {
@@ -282,7 +333,7 @@ public class HttpRequest : MonoBehaviour {
                     customerObj.transform.localPosition = new Vector3(
                         xPos * 5,
                         customer["nps_scores"].list[0]["score"].f / 2,
-                        zPos * 5);
+                        (5 - (zPos * 5)));
 
 
                     //Sets saturation depending on age.
@@ -315,6 +366,14 @@ public class HttpRequest : MonoBehaviour {
                         
                     // }
                     customerCount++;
+                }
+                else if(customer.HasField("count") && customer.HasField("product_id"))
+                {
+                    // this will save the number of customers for each product
+                    print(customer["count"].i);
+                    int productCount = (int) customer["count"].i;
+                    // int productId = (int) customer["product_id"].i;
+                    productCounts.Add(productCount);
                 }
                 
             }
