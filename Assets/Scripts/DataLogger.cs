@@ -17,6 +17,8 @@ public class DataLogger : MonoBehaviour {
 	protected float sideChanges = 0f;
 	protected float slideTime = 0f;
 	protected float taskTime = 0f;
+	protected int resetClicks = 0;
+	protected int task1resetClicks = 0;
 	private bool isUsingSlider = false;
 	private bool isDoingTasks = false;
 	public Text testSubjectName;
@@ -91,6 +93,11 @@ public class DataLogger : MonoBehaviour {
 			pausePlayTimerButton.transform.GetChild(0).GetComponent<Text>().text = "Pause";
 		}
 	}
+	public void IncrementResetClicks(){
+		if (isDoingTasks) {
+			resetClicks++;
+		}
+	}
 
 	public void task1Finished() {
 		// Stop timer for first tasks
@@ -103,6 +110,7 @@ public class DataLogger : MonoBehaviour {
 		task1slideTime = slideTime;
 		task1Time = taskTime;
 		task1sideChanges = (int) sideChanges;
+		task1resetClicks = resetClicks;
 
 		//reset data
 		buttonClicks = 0;
@@ -110,6 +118,7 @@ public class DataLogger : MonoBehaviour {
 		slideTime = 0f;
 		sideChanges = 0f;
 		taskTime = 0f;
+		resetClicks = 0;
 
 		print("Button clicks: " + task1buttonClicks.ToString());
 		print("sliderUses clicks: " + task1sliderUses);
@@ -125,7 +134,7 @@ public class DataLogger : MonoBehaviour {
 		StreamWriter sw;
 		if(!File.Exists(path)){
 			sw = new StreamWriter(path);
-			sw.WriteLine("Name,Task 1 Button clicks,Task 1 Slider usages,Task 1 Slider time,Task 1 Side changes,Task 1 Time,Task 2 Button clicks,Task 2 Slider usages,Task 2 Slider time,Task 2 Side changes,Task 2 Time");
+			sw.WriteLine("Name,Task 1 Button clicks,Task 1 Slider usages,Task 1 Slider time,Task 1 Side changes,Task 1 Time,Task 2 Button clicks,Task 2 Slider usages,Task 2 Slider time,Task 2 Side changes,Task 2 Time,Resets Task 1,Resets Task 2");
 		}
 		else{
 			sw = new StreamWriter(path, true);
@@ -141,7 +150,9 @@ public class DataLogger : MonoBehaviour {
 		sw.Write(sliderUses.ToString() + ",");
 		sw.Write(slideTime.ToString() + ",");
 		sw.Write(((int) sideChanges).ToString() + ",");
-		sw.Write(taskTime.ToString());		
+		sw.Write(taskTime.ToString() + ",");
+		sw.Write(task1resetClicks + ",");
+		sw.Write(resetClicks);
 		sw.WriteLine();
 		sw.Close();
 	}

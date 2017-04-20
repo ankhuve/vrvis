@@ -44,8 +44,8 @@ namespace VRTK
         protected Vector3 minimumLimitDiff;
         protected Vector3 maximumLimitDiff;
         protected Vector3 snapPosition;
-        protected Vector3 minPoint;
-        protected Vector3 maxPoint;
+        public Vector3 minPoint;
+        public Vector3 maxPoint;
         protected VRTK_InteractableObject sliderInteractableObject;
         protected Highlighters.VRTK_OutlineObjectCopyHighlighter highlighter;
         protected VRTK.Examples.ControlReactor_Custom controlReactor;

@@ -25,4 +25,14 @@ public class ColorChanger : MonoBehaviour {
 		isActive = !isActive;
 		print("togglat");
 	}
+
+	public void SetInactive(){
+		isActive = false;
+		GetComponent<TextMesh>().color = off;
+	}
+
+	public void SetActive(){
+		isActive = true;
+		GetComponent<TextMesh>().color = on;
+	}
 }

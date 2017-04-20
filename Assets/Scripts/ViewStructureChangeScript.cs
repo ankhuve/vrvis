@@ -15,7 +15,7 @@ public class ViewStructureChangeScript : MonoBehaviour {
 	public List<int> currentlyHighlighted;
 
 	// Use this for initialization
-	void Start () {
+	public void Start () {
 		currentlyHighlighted = new List<int>();
 		currentlyHighlighted.Add(1);
 		currentlyHighlighted.Add(2);
