@@ -75,10 +75,12 @@ public class HttpRequest : MonoBehaviour {
 
             Transform productsContainer = graphContainer.transform.Find("Products");
             foreach(Transform product in productsContainer) {
+                Renderer currentRenderer = product.transform.GetChild(0).GetComponent<Renderer>();
 
                 if(viewStructureChangeScript.currentlyHighlighted.Contains(product.GetComponent<CustomerData>().productCategoryId))
                 {
                     CustomerData custData = product.GetComponent<CustomerData>();
+                    Material previousMaterial = custData.productMaterial;
                     if (
                         //Allow age = 0 to be Random, but change to
                             custData.age < ageMin.GetValue() ||
@@ -89,11 +91,37 @@ public class HttpRequest : MonoBehaviour {
                             custData.timeAsCustomerInMonths > customerLengthMax.GetValue()
                         ) {
                         //Set faded material
-                        product.transform.GetChild(0).GetComponent<Renderer>().material = fadedMaterial;
+                        if(currentRenderer.sharedMaterial != fadedMaterial){
+                            foreach (GameObject slider in grabbedSliders)
+                            {
+                                VRTK.VRTK_InteractableObject sliderInteractableObject = slider.GetComponent<VRTK.VRTK_InteractableObject>();
+                                VRTK.VRTK_SharedMethods.TriggerHapticPulse(
+                                    VRTK.VRTK_DeviceFinder.GetControllerIndex(sliderInteractableObject.GetGrabbingObject()), 
+                                    sliderInteractableObject.gameObject.GetComponent<VRTK.VRTK_InteractHaptics>().strengthOnTouch/4, 
+                                    sliderInteractableObject.gameObject.GetComponent<VRTK.VRTK_InteractHaptics>().durationOnTouch, 
+                                    sliderInteractableObject.gameObject.GetComponent<VRTK.VRTK_InteractHaptics>().intervalOnTouch
+                                );
+                            }
+                            currentRenderer.material = fadedMaterial;
+                        }
+                        
                     }
                     else {
                         //set previous material
-                        product.transform.GetChild(0).GetComponent<Renderer>().material = custData.productMaterial;
+                        if(currentRenderer.sharedMaterial != previousMaterial){
+                            foreach (GameObject slider in grabbedSliders)
+                            {
+                                VRTK.VRTK_InteractableObject sliderInteractableObject = slider.GetComponent<VRTK.VRTK_InteractableObject>();
+                                VRTK.VRTK_SharedMethods.TriggerHapticPulse(
+                                    VRTK.VRTK_DeviceFinder.GetControllerIndex(sliderInteractableObject.GetGrabbingObject()), 
+                                    sliderInteractableObject.gameObject.GetComponent<VRTK.VRTK_InteractHaptics>().strengthOnTouch/4, 
+                                    sliderInteractableObject.gameObject.GetComponent<VRTK.VRTK_InteractHaptics>().durationOnTouch, 
+                                    sliderInteractableObject.gameObject.GetComponent<VRTK.VRTK_InteractHaptics>().intervalOnTouch
+                                );
+                            }
+                            currentRenderer.material = previousMaterial;
+                        }
+                        
                         numHighlightedCustomers++;
 
                         if(product.GetComponent<CustomerData>().productCategoryId == 1)
@@ -112,14 +140,7 @@ public class HttpRequest : MonoBehaviour {
                     }
                 } else{
                     //Set faded material
-                    product.transform.GetChild(0).GetComponent<Renderer>().material = fadedMaterial;
-
-                    foreach (GameObject slider in grabbedSliders)
-                    {
-                        VRTK.VRTK_InteractableObject sliderInteractableObject = slider.GetComponent<VRTK.VRTK_InteractableObject>();
-                        VRTK.VRTK_SharedMethods.TriggerHapticPulse(VRTK.VRTK_DeviceFinder.GetControllerIndex(sliderInteractableObject.GetGrabbingObject()), sliderInteractableObject.gameObject.GetComponent<VRTK.VRTK_InteractHaptics>().strengthOnTouch, sliderInteractableObject.gameObject.GetComponent<VRTK.VRTK_InteractHaptics>().durationOnTouch, sliderInteractableObject.gameObject.GetComponent<VRTK.VRTK_InteractHaptics>().intervalOnTouch);
-                    }
-
+                    currentRenderer.material = fadedMaterial;
                 }
             }
             numCustomersText.text = numHighlightedCustomers.ToString();
@@ -210,9 +231,9 @@ public class HttpRequest : MonoBehaviour {
             ageMax.maximumValue = maxAge;
             //Set customer length for slider
             customerLengthMin.minimumValue = Mathf.Floor(minLengthOfBeingCustomer);
-            customerLengthMin.maximumValue = Mathf.Ceil(maxLengthOfBeingCustomer);
+            customerLengthMin.maximumValue = Mathf.Floor(maxLengthOfBeingCustomer);
             customerLengthMax.minimumValue = Mathf.Floor(minLengthOfBeingCustomer);
-            customerLengthMax.maximumValue = Mathf.Ceil(maxLengthOfBeingCustomer);
+            customerLengthMax.maximumValue = Mathf.Floor(maxLengthOfBeingCustomer);
     }
 
     public void CallSegmentOrderBy () {

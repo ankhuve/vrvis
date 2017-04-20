@@ -181,12 +181,12 @@ namespace VRTK
             if(sliderInteractableObject.IsGrabbed())
             {
                 highlighter.Highlight(sliderInteractableObject.touchHighlightColor);
-                if(!APIHandler.GetComponent<HttpRequest>().grabbedSliders.Contains(sliderInteractableObject.GetGrabbingObject())){
-                    APIHandler.GetComponent<HttpRequest>().grabbedSliders.Add(sliderInteractableObject.GetGrabbingObject());
+                if(!APIHandler.GetComponent<HttpRequest>().grabbedSliders.Contains(sliderInteractableObject.gameObject)){
+                    APIHandler.GetComponent<HttpRequest>().grabbedSliders.Add(sliderInteractableObject.gameObject);
                 }
             }
             else {
-                APIHandler.GetComponent<HttpRequest>().grabbedSliders.Remove(sliderInteractableObject.GetGrabbingObject());
+                APIHandler.GetComponent<HttpRequest>().grabbedSliders.Remove(sliderInteractableObject.gameObject);
             }
 
             //APIHandler.GetComponent<HttpRequest>().SetNumOfCustomersToGet();
