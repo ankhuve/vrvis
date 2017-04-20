@@ -34,6 +34,8 @@ namespace VRTK
         public float releasedFriction = 50f;
         public GameObject APIHandler;
         public DataLogger dataLogger;
+        public Material fadedTextMaterial;
+        public Material visibleTextMaterial;
 
         protected Direction finalDirection;
         protected Rigidbody sliderRigidbody;
@@ -46,15 +48,10 @@ namespace VRTK
         protected Vector3 maxPoint;
         protected VRTK_InteractableObject sliderInteractableObject;
         protected Highlighters.VRTK_OutlineObjectCopyHighlighter highlighter;
+        protected VRTK.Examples.ControlReactor_Custom controlReactor;
+        private Color fadedText = new Color(0.25f,0.25f,0.25f,1);
+        private Color visibleText = new Color(1,1,1,1);
 
-
-        public struct SliderValueChangeEventArgs
-        {
-            public GameObject interactingSlider;
-        }
-        
-        public delegate void SliderHighlightEventHandler(object sender, SliderValueChangeEventArgs e);
-        public event SliderHighlightEventHandler OnSlide;
 
         protected override void OnDrawGizmos()
         {
@@ -74,13 +71,23 @@ namespace VRTK
             InitInteractableObject();
             InitJoint();
             highlighter = GetComponent<Highlighters.VRTK_OutlineObjectCopyHighlighter>();
+            controlReactor = GetComponent<VRTK.Examples.ControlReactor_Custom>();
+            visibleTextMaterial = transform.parent.FindChild("Description").GetComponent<Renderer>().material;
 
             sliderInteractableObject.InteractableObjectUngrabbed += (s,e) => {
+                if(APIHandler.GetComponent<HttpRequest>().grabbedSliders.Count == 1){
+                    transform.parent.FindChild("Description").GetComponent<MeshRenderer>().material = visibleTextMaterial;
+                }
+                APIHandler.GetComponent<HttpRequest>().grabbedSliders.Remove(sliderInteractableObject.gameObject);
                 dataLogger.StopSliderUse();
             };
 
             // log clicks
             sliderInteractableObject.InteractableObjectGrabbed += (s,e) => {
+                if(!APIHandler.GetComponent<HttpRequest>().grabbedSliders.Contains(sliderInteractableObject.gameObject)){
+                    APIHandler.GetComponent<HttpRequest>().grabbedSliders.Add(sliderInteractableObject.gameObject);
+                }
+                transform.parent.FindChild("Description").GetComponent<MeshRenderer>().material = fadedTextMaterial;
                 dataLogger.StartSliderUse();
                 dataLogger.IncrementSliderUses();
             };
@@ -177,16 +184,18 @@ namespace VRTK
         {
             CalculateValue();
 
+            if(sliderInteractableObject.IsTouched())
+            {
+                controlReactor.go.transform.position = new Vector3(controlReactor.go.transform.position.x, transform.position.y + 0.08f, controlReactor.go.transform.position.z);
+
+            } else{
+                controlReactor.go.transform.position = new Vector3(controlReactor.go.transform.position.x, transform.position.y - 0.01f, controlReactor.go.transform.position.z);                                
+            }
+
             // keep the slider lit while sliding
             if(sliderInteractableObject.IsGrabbed())
             {
                 highlighter.Highlight(sliderInteractableObject.touchHighlightColor);
-                if(!APIHandler.GetComponent<HttpRequest>().grabbedSliders.Contains(sliderInteractableObject.gameObject)){
-                    APIHandler.GetComponent<HttpRequest>().grabbedSliders.Add(sliderInteractableObject.gameObject);
-                }
-            }
-            else {
-                APIHandler.GetComponent<HttpRequest>().grabbedSliders.Remove(sliderInteractableObject.gameObject);
             }
 
             //APIHandler.GetComponent<HttpRequest>().SetNumOfCustomersToGet();
