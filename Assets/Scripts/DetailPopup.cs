@@ -4,19 +4,10 @@ using UnityEngine;
 
 public class DetailPopup : MonoBehaviour {
 
+	public TextMesh productName;
+	public TextMesh customerAge;
+	public TextMesh customerNPS;
+	public TextMesh customerTimeAs;
+
 	protected CustomerData details;
-
-	// Use this for initialization
-	void Start () {
-		// transform.parent;
-	}
-
-	void OnEnable(){
-
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
 }

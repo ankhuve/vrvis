@@ -13,11 +13,15 @@ public class ButtonInteraction : MonoBehaviour {
 	public Material off;
 	public DataLogger dataLogger;
 	public GameObject productTextMeshes;
+	public Collider ignoredCollider;
 
 
 	// Use this for initialization
 	private void Start () {
 		Vector3 startPosition = transform.localPosition;
+
+		Physics.IgnoreCollision(ignoredCollider, GetComponent<Collider>());
+		Physics.IgnoreCollision(ignoredCollider, transform.FindChild("SquareButtonTop-Trigger").GetComponent<Collider>());
 
 		buttonEvents = GetComponent<VRTK_Button_UnityEvents>();
 		if (buttonEvents == null)

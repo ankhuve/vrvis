@@ -11,6 +11,9 @@
 		public ViewStructureChangeScript vsChangeScript;
 		public List<ColorChanger> colorChangers;
 		public DataLogger dl;
+		public DetailsOnDemand customerDoD;
+		public bool isTouchingCustomer = false;
+
 		
 
 		// Use this for initialization
@@ -21,7 +24,7 @@
 				return;
 			}
 			GetComponent<VRTK_ControllerEvents>().TouchpadPressed += new ControllerInteractionEventHandler(DoTouchpadPressed);
-			GetComponent<VRTK_ControllerEvents>().TouchpadReleased += new ControllerInteractionEventHandler(DoTouchpadReleased);
+			GetComponent<VRTK_ControllerEvents>().TriggerClicked += new ControllerInteractionEventHandler(DoTriggerClicked);
 
 			foreach (GameObject slider in sliders)
 			{
@@ -36,9 +39,13 @@
 			dl.IncrementResetClicks();
 		}
 
-		private void DoTouchpadReleased(object sender, ControllerInteractionEventArgs e)
+		private void DoTriggerClicked(object sender, ControllerInteractionEventArgs e)
 		{
-			print(e.controllerIndex + " TOUCHPAD " + " released "+ e);
+			if(customerDoD != null){
+				if(!isTouchingCustomer){
+					customerDoD.HidePopup();
+				}
+			}
 		}
 
 		void ResetSliders(){
