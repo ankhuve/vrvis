@@ -9,13 +9,16 @@
 		protected GameObject popupDisplay;
 		public GameObject rightController;
 		public GameObject leftController;
+		public DataLogger dataLogger;
 		protected CustomerData customerData;
+		private bool stillClicked = false;
 
 		// Use this for initialization
 		void Start () {
 			popupDisplay = GameObject.Find("DetailPopup");
 			rightController = GameObject.Find("RightController");
 			leftController = GameObject.Find("LeftController");
+			dataLogger = GameObject.Find("Logging Object").GetComponent<DataLogger>();
 			customerData = transform.parent.GetComponent<CustomerData>();
 			Physics.IgnoreCollision(leftController.transform.GetChild(0).GetChild(0).GetComponent<Collider>(), GetComponent<Collider>());
 
@@ -28,11 +31,15 @@
 
 		void OnTriggerStay(Collider other){
 			if(other.gameObject.name == "PointCollider" && rightController.GetComponent<VRTK_ControllerEvents>().triggerClicked){
-				DisplayPopup();
-				rightController.GetComponent<ResetButtonScript>().customerDoD = this;
-				rightController.GetComponent<ResetButtonScript>().isTouchingCustomer = true;
+				if(!stillClicked){
+					DisplayPopup();
+					rightController.GetComponent<ResetButtonScript>().customerDoD = this;
+					rightController.GetComponent<ResetButtonScript>().isTouchingCustomer = true;
+				}
+				stillClicked = true;
 			} else if(other.gameObject.name == "PointCollider"){
 				rightController.GetComponent<ResetButtonScript>().isTouchingCustomer = true;
+				stillClicked = false;
 			}
 		}
 
@@ -57,6 +64,8 @@
 			popupDisplay.GetComponent<DetailPopup>().customerAge.text = customerData.age.ToString();
 			popupDisplay.GetComponent<DetailPopup>().customerTimeAs.text = customerData.timeAsCustomerInMonths.ToString();
 			popupDisplay.GetComponent<DetailPopup>().customerNPS.text = customerData.npsScore.ToString();
+
+			dataLogger.IncrementDetailClicks();
 		}
 
 		public void HidePopup(){

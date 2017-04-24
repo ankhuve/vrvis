@@ -12,12 +12,14 @@ public class DataLogger : MonoBehaviour {
 	protected int task1sideChanges = 0;
 	protected float task1slideTime = 0f;
 	protected float task1Time = 0f;
+	protected float task1DetailClicks = 0f;
 	protected int buttonClicks = 0;
 	protected int sliderUses = 0;
 	protected float sideChanges = 0f;
 	protected float slideTime = 0f;
 	protected float taskTime = 0f;
 	protected int resetClicks = 0;
+	protected int detailClicks = 0;
 	protected int task1resetClicks = 0;
 	private bool isUsingSlider = false;
 	private bool isDoingTasks = false;
@@ -99,6 +101,14 @@ public class DataLogger : MonoBehaviour {
 		}
 	}
 
+	public void IncrementDetailClicks(){
+		if (isDoingTasks) {
+			detailClicks++;
+		}
+	}
+
+
+
 	public void task1Finished() {
 		// Stop timer for first tasks
 		StopTasksTimer();
@@ -111,6 +121,7 @@ public class DataLogger : MonoBehaviour {
 		task1Time = taskTime;
 		task1sideChanges = (int) sideChanges;
 		task1resetClicks = resetClicks;
+		task1DetailClicks = detailClicks;
 
 		//reset data
 		buttonClicks = 0;
@@ -119,6 +130,7 @@ public class DataLogger : MonoBehaviour {
 		sideChanges = 0f;
 		taskTime = 0f;
 		resetClicks = 0;
+		detailClicks = 0;
 
 		print("Button clicks: " + task1buttonClicks.ToString());
 		print("sliderUses clicks: " + task1sliderUses);
@@ -134,7 +146,7 @@ public class DataLogger : MonoBehaviour {
 		StreamWriter sw;
 		if(!File.Exists(path)){
 			sw = new StreamWriter(path);
-			sw.WriteLine("Name,Task 1 Button clicks,Task 1 Slider usages,Task 1 Slider time,Task 1 Side changes,Task 1 Time,Task 2 Button clicks,Task 2 Slider usages,Task 2 Slider time,Task 2 Side changes,Task 2 Time,Resets Task 1,Resets Task 2");
+			sw.WriteLine("Name,Task 1 Button clicks,Task 1 Slider usages,Task 1 Slider time,Task 1 Side changes,Task 1 Time,Task 2 Button clicks,Task 2 Slider usages,Task 2 Slider time,Task 2 Side changes,Task 2 Time,Resets Task 1,Resets Task 2,Task 1 Detail Clicks,Task 2 Detail Clicks");
 		}
 		else{
 			sw = new StreamWriter(path, true);
@@ -152,7 +164,9 @@ public class DataLogger : MonoBehaviour {
 		sw.Write(((int) sideChanges).ToString() + ",");
 		sw.Write(taskTime.ToString() + ",");
 		sw.Write(task1resetClicks + ",");
-		sw.Write(resetClicks);
+		sw.Write(resetClicks + ",");
+		sw.Write(task1DetailClicks + ",");
+		sw.Write(detailClicks);
 		sw.WriteLine();
 		sw.Close();
 	}

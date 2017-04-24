@@ -9,11 +9,13 @@ public class RotateToFaceUser : MonoBehaviour {
 	public bool onlyRotateHorizontal;
 	public List<GameObject> buttonSets;
 	public ViewStructureChangeScript viewStructureChangeScript;
+	public bool isNPSScoreSlider;
+	private Vector3 initialRotation;
 
-	// Use this for initialization
-	void Start () {
-		
+	void Start(){
+		initialRotation = new Vector3(0,0,-90);
 	}
+
 	
 	// Update is called once per frame
 	void Update () {
@@ -31,7 +33,15 @@ public class RotateToFaceUser : MonoBehaviour {
 				EnableButtonSet(3);
 			}
 
-		} else{
+		} else if(isNPSScoreSlider){
+			Vector3 lookPos = transform.position - head.transform.position;
+			lookPos.x = 0;
+			if(lookPos.z <= 0){
+				transform.rotation = Quaternion.LookRotation(lookPos);
+			} else{
+				transform.localEulerAngles = initialRotation;
+			}
+		} else {
 			// Vector3 lookPoint = head.transform.position;
 			// transform.LookAt(lookPoint);
 			transform.rotation = Quaternion.LookRotation(transform.position - head.transform.position);

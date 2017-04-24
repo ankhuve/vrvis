@@ -40,6 +40,9 @@ public class HttpRequest : MonoBehaviour {
     public Material magentaMaterial;
     public Material yellowMaterial;
     public Material fadedMaterial;
+    public Material fadedCyan;
+    public Material fadedMagenta;
+    public Material fadedYellow;
 
     private int numHighlightedCustomers;
     protected List<int> highlightedProductCounts = new List<int>();
@@ -77,9 +80,9 @@ public class HttpRequest : MonoBehaviour {
             foreach(Transform product in productsContainer) {
                 Renderer currentRenderer = product.transform.GetChild(0).GetComponent<Renderer>();
 
+                CustomerData custData = product.GetComponent<CustomerData>();
                 if(viewStructureChangeScript.currentlyHighlighted.Contains(product.GetComponent<CustomerData>().productCategoryId))
                 {
-                    CustomerData custData = product.GetComponent<CustomerData>();
                     Material previousMaterial = custData.productMaterial;
                     if (
                         //Allow age = 0 to be Random, but change to
@@ -91,7 +94,7 @@ public class HttpRequest : MonoBehaviour {
                             custData.timeAsCustomerInMonths > customerLengthMax.GetValue()
                         ) {
                         //Set faded material
-                        if(currentRenderer.sharedMaterial != fadedMaterial){
+                        if(currentRenderer.sharedMaterial != custData.fadedMaterial){
                             foreach (GameObject slider in grabbedSliders)
                             {
                                 VRTK.VRTK_InteractableObject sliderInteractableObject = slider.GetComponent<VRTK.VRTK_InteractableObject>();
@@ -101,8 +104,8 @@ public class HttpRequest : MonoBehaviour {
                                     sliderInteractableObject.gameObject.GetComponent<VRTK.VRTK_InteractHaptics>().durationOnTouch, 
                                     sliderInteractableObject.gameObject.GetComponent<VRTK.VRTK_InteractHaptics>().intervalOnTouch
                                 );
-                            }
-                            currentRenderer.material = fadedMaterial;
+                            } 
+                            currentRenderer.material = custData.fadedMaterial;
                         }
                         
                     }
@@ -140,7 +143,7 @@ public class HttpRequest : MonoBehaviour {
                     }
                 } else{
                     //Set faded material
-                    currentRenderer.material = fadedMaterial;
+                    currentRenderer.material = custData.fadedMaterial;
                 }
             }
             numCustomersText.text = numHighlightedCustomers.ToString();
@@ -165,7 +168,7 @@ public class HttpRequest : MonoBehaviour {
         int cCounter = 0;
         Transform productsContainer = graphContainer.transform.Find("Products");
         foreach(Transform product in productsContainer) {
-            if (product.transform.GetChild(0).GetComponent<Renderer>().material != fadedMaterial) {
+            if (product.transform.GetChild(0).GetComponent<Renderer>().sharedMaterial != product.transform.GetChild(0).GetComponent<CustomerData>().fadedMaterial) {
                 cCounter++;
             }
         }
@@ -326,14 +329,17 @@ public class HttpRequest : MonoBehaviour {
                             //set red material
                             customerObj.transform.GetChild(0).GetComponent<Renderer>().material = cyanMaterial;
                             customerData.productMaterial = cyanMaterial;
+                            customerData.fadedMaterial = fadedCyan;
                         }
                         else if (customer["pivot"]["product_id"].f == 2f) {
                             customerObj.transform.GetChild(0).GetComponent<Renderer>().material = magentaMaterial;
                             customerData.productMaterial = magentaMaterial;
+                            customerData.fadedMaterial = fadedMagenta;
                         }
                         else if (customer["pivot"]["product_id"].f == 6f) {
                             customerObj.transform.GetChild(0).GetComponent<Renderer>().material = yellowMaterial;
                             customerData.productMaterial = yellowMaterial;
+                            customerData.fadedMaterial = fadedYellow;
                         }
                         customerData.productCategoryId = (int) customer["pivot"]["product_id"].f;
                     }

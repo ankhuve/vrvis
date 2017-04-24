@@ -10,6 +10,7 @@ public class CustomerData : MonoBehaviour {
 	public int npsScore;
 	public float timeAsCustomerInMonths;
 	public Material productMaterial;
+	public Material fadedMaterial;
 
 	public void reset() {
 		productCategoryId = -1;
@@ -18,6 +19,7 @@ public class CustomerData : MonoBehaviour {
 		npsScore = -1;
 		timeAsCustomerInMonths = -1f;
 		productMaterial = null;
+		fadedMaterial = null;
 	}
 
 }

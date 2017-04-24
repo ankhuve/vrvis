@@ -51,6 +51,7 @@ namespace VRTK
         protected VRTK.Examples.ControlReactor_Custom controlReactor;
         private Color fadedText = new Color(0.25f,0.25f,0.25f,1);
         private Color visibleText = new Color(1,1,1,1);
+        public bool autoMoveTextOnTouch;
 
 
         protected override void OnDrawGizmos()
@@ -184,12 +185,15 @@ namespace VRTK
         {
             CalculateValue();
 
-            if(sliderInteractableObject.IsTouched())
-            {
-                controlReactor.go.transform.position = new Vector3(controlReactor.go.transform.position.x, transform.position.y + 0.08f, controlReactor.go.transform.position.z);
+            if(autoMoveTextOnTouch){
+                // Move the slider text so the controller doesn't cover it
+                if(sliderInteractableObject.IsTouched())
+                {
+                    controlReactor.go.transform.position = new Vector3(controlReactor.go.transform.position.x, transform.position.y + 0.08f, controlReactor.go.transform.position.z);
 
-            } else{
-                controlReactor.go.transform.position = new Vector3(controlReactor.go.transform.position.x, transform.position.y - 0.01f, controlReactor.go.transform.position.z);                                
+                } else{
+                    controlReactor.go.transform.position = new Vector3(controlReactor.go.transform.position.x, transform.position.y - 0.01f, controlReactor.go.transform.position.z);                                
+                }
             }
 
             // keep the slider lit while sliding
