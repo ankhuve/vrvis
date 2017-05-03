@@ -161,6 +161,12 @@ public class HttpRequest : MonoBehaviour {
             
         }
         setHightlightSizePos(ageMin, ageMax, NPSMin, NPSMax, customerLengthMin, customerLengthMax);
+
+        if(Input.GetKeyDown("1")){
+            CallSegmentOrderBy();
+        } else if(Input.GetKeyDown("2")){
+            CallSegmentNotOrderBy();
+        }
 	}
 
     public int getNrOfHighlightedCustomers() {
