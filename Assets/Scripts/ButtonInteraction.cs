@@ -11,7 +11,7 @@ public class ButtonInteraction : MonoBehaviour {
 	public int productId;
 	public Material on;
 	public Material off;
-	public DataLogger dataLogger;
+	// public DataLogger dataLogger;
 	public GameObject productTextMeshes;
 	public Collider ignoredCollider;
 
@@ -59,7 +59,7 @@ public class ButtonInteraction : MonoBehaviour {
 		productTextMeshes.transform.FindChild(productId.ToString()).GetChild(0).GetComponent<ColorChanger>().ToggleActive();
 
 		// logga klick
-		dataLogger.IncrementButtonClicks();
+		// dataLogger.IncrementButtonClicks();
 	}
 
 	public void SetActive(bool active){
@@ -73,7 +73,7 @@ public class ButtonInteraction : MonoBehaviour {
 		} else{
 			transform.parent.localScale = Vector3.one;//yMotion = ConfigurableJointMotion.Limited;
 			if(transform.GetChild(1).gameObject.active != true){
-				dataLogger.IncrementParticipantChangedSide();
+				// dataLogger.IncrementParticipantChangedSide();
 			}
 			transform.GetChild(1).gameObject.SetActive(true);
 			gameObject.GetComponent<VRTK_Button>().enabled = true;

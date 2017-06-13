@@ -10,7 +10,7 @@
 		public List<Vector3> startPositions = new List<Vector3>();
 		public ViewStructureChangeScript vsChangeScript;
 		public List<ColorChanger> colorChangers;
-		public DataLogger dl;
+		// public DataLogger dl;
 		public DetailsOnDemand customerDoD;
 		public bool isTouchingCustomer = false;
 
@@ -36,7 +36,7 @@
 		{
 			ResetSliders();
 			ResetButtons();
-			dl.IncrementResetClicks();
+			// dl.IncrementResetClicks();
 		}
 
 		private void DoTriggerClicked(object sender, ControllerInteractionEventArgs e)

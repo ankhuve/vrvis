@@ -33,7 +33,7 @@ namespace VRTK
         [Tooltip("The amount of friction the slider will have when it is released.")]
         public float releasedFriction = 50f;
         public GameObject APIHandler;
-        public DataLogger dataLogger;
+        // public DataLogger dataLogger;
         public Material fadedTextMaterial;
         public Material visibleTextMaterial;
 
@@ -80,7 +80,7 @@ namespace VRTK
                     transform.parent.FindChild("Description").GetComponent<MeshRenderer>().material = visibleTextMaterial;
                 }
                 APIHandler.GetComponent<HttpRequest>().grabbedSliders.Remove(sliderInteractableObject.gameObject);
-                dataLogger.StopSliderUse();
+                // dataLogger.StopSliderUse();
             };
 
             // log clicks
@@ -89,8 +89,8 @@ namespace VRTK
                     APIHandler.GetComponent<HttpRequest>().grabbedSliders.Add(sliderInteractableObject.gameObject);
                 }
                 transform.parent.FindChild("Description").GetComponent<MeshRenderer>().material = fadedTextMaterial;
-                dataLogger.StartSliderUse();
-                dataLogger.IncrementSliderUses();
+                // dataLogger.StartSliderUse();
+                // dataLogger.IncrementSliderUses();
             };
         }
 

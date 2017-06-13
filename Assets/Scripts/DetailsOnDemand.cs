@@ -9,7 +9,7 @@
 		protected GameObject popupDisplay;
 		public GameObject rightController;
 		public GameObject leftController;
-		public DataLogger dataLogger;
+		// public DataLogger dataLogger;
 		protected CustomerData customerData;
 		private bool stillClicked = false;
 
@@ -18,7 +18,7 @@
 			popupDisplay = GameObject.Find("DetailPopup");
 			rightController = GameObject.Find("RightController");
 			leftController = GameObject.Find("LeftController");
-			dataLogger = GameObject.Find("Logging Object").GetComponent<DataLogger>();
+			// dataLogger = GameObject.Find("Logging Object").GetComponent<DataLogger>();
 			customerData = transform.parent.GetComponent<CustomerData>();
 			Physics.IgnoreCollision(leftController.transform.GetChild(0).GetChild(0).GetComponent<Collider>(), GetComponent<Collider>());
 
@@ -65,7 +65,7 @@
 			popupDisplay.GetComponent<DetailPopup>().customerTimeAs.text = customerData.timeAsCustomerInMonths.ToString();
 			popupDisplay.GetComponent<DetailPopup>().customerNPS.text = customerData.npsScore.ToString();
 
-			dataLogger.IncrementDetailClicks();
+			// dataLogger.IncrementDetailClicks();
 		}
 
 		public void HidePopup(){

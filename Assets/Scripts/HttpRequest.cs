@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 public class HttpRequest : MonoBehaviour {
 
-    public DataLogger dataLogger;
+    // public DataLogger dataLogger;
     public GameObject customerBall;
     public GameObject highlightArea;
     public int numberOfCustomersToGet = 675;
@@ -260,7 +260,7 @@ public class HttpRequest : MonoBehaviour {
         form.AddField("segment","0");
         RemoveCustomers();
         StartCoroutine(GetCustomersWithProducts(form));
-        dataLogger.task1Finished();
+        // dataLogger.task1Finished();
     }
 
     IEnumerator GetCustomersWithProducts(WWWForm form) {
